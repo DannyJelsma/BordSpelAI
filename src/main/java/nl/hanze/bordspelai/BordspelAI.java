@@ -1,12 +1,17 @@
 package nl.hanze.bordspelai;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import nl.hanze.bordspelai.net.ClientCommand;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.net.ServerReply;
 
-public class BordspelAI {
+public class BordspelAI extends Application {
 
     public static void main(String[] args) {
+        // javafx
+        launch(args);
+
         Server server = new Server("95.216.161.219", 7789);
 
         if (server.connect()) {
@@ -35,5 +40,11 @@ public class BordspelAI {
         if (reply.isMap()) {
             System.out.println(reply.getReplyType() + ": " + reply.getDataMap());
         }
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        stage.setTitle("stfu");
+        stage.show();
     }
 }
