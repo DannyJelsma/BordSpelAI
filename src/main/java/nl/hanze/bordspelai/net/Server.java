@@ -44,47 +44,52 @@ public class Server {
     }
 
     public boolean sendCommand(ClientCommand command, String... params) {
-        StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
-
-        if (params != null) {
-            for (String param : params) {
-                if (params.length > 1) {
-                    commandBuilder.append("\"");
-                }
-
-                commandBuilder.append(param);
-
-                if (params.length > 1) {
-                    commandBuilder.append("\"");
-                }
-
-                commandBuilder.append(" ");
-            }
-        }
-
-        String commandString = commandBuilder.toString();
-        out.println(commandString);
-        System.out.println("> " + commandString);
-        String reply = waitForServerReply();
-        System.out.println(reply);
-
-        if (reply.startsWith("ERR")) {
-            lastError = reply.split(" ", 2)[1];
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    public String waitForServerReply() {
         try {
-            return in.readLine();
-        } catch (IOException e) {
-            return null;
+            StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
+
+            if (params != null) {
+                for (String param : params) {
+                    if (params.length > 1) {
+                        commandBuilder.append("\"");
+                    }
+
+                    commandBuilder.append(param);
+
+                    if (params.length > 1) {
+                        commandBuilder.append("\"");
+                    }
+
+                    commandBuilder.append(" ");
+                }
+            }
+
+            String commandString = commandBuilder.toString().trim();
+            out.println(commandString);
+            System.out.println("> " + commandString);
+            String reply = in.readLine();
+
+            if (reply.equalsIgnoreCase("OK")) {
+                return true;
+            } else {
+                lastError = reply.split(" ", 2)[1];
+                return false;
+            }
+        } catch (IOException ex) {
+            ex.printStackTrace();
         }
+
+        return false;
     }
 
     public String getLastError() {
         return lastError;
+    }
+
+    public ServerReply waitForServerReply() {
+        try {
+            return new ServerReply(in.readLine());
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

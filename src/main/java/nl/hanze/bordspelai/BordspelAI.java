@@ -2,6 +2,7 @@ package nl.hanze.bordspelai;
 
 import nl.hanze.bordspelai.net.ClientCommand;
 import nl.hanze.bordspelai.net.Server;
+import nl.hanze.bordspelai.net.ServerReply;
 
 public class BordspelAI {
 
@@ -11,15 +12,28 @@ public class BordspelAI {
         if (server.connect()) {
             server.sendCommand(ClientCommand.LOGIN, "client");
             server.sendCommand(ClientCommand.SUBSCRIBE, "Tic-tac-toe");
+
             if (!server.sendCommand(ClientCommand.CHALLENGE, "test", "Tic-tac-toe")) {
-                // Zou je kunnen displayen in de UI.
-                System.out.println("Error while executing this command: " + server.getLastError());
+                System.out.println("ERROR: " + server.getLastError());
             }
         }
 
         while (true) {
-            // Debug purposes
-            System.out.println(server.waitForServerReply());
+            // Debugging
+            printServerReply(server);
+        }
+    }
+
+    // Debugging
+    public static void printServerReply(Server server) {
+        ServerReply reply = server.waitForServerReply();
+
+        if (reply.isList()) {
+            System.out.println(reply.getReplyType() + ": " + reply.getDataList());
+        }
+
+        if (reply.isMap()) {
+            System.out.println(reply.getReplyType() + ": " + reply.getDataMap());
         }
     }
 }
