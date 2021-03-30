@@ -2,13 +2,13 @@ package nl.hanze.bordspelai.net;
 
 import java.util.*;
 
-public class ServerReply {
+public class GameNotification {
 
     // TODO: Verbeteren...
-    private String replyType;
+    private String notificationType;
     private String data;
 
-    public ServerReply(String message) {
+    public GameNotification(String message) {
         parse(message);
     }
 
@@ -27,15 +27,15 @@ public class ServerReply {
             }
 
             if (i == 2) {
-                replyType = split[i];
+                notificationType = split[i];
             } else if (i == 3) {
                 data = split[i];
             }
         }
     }
 
-    public String getReplyType() {
-        return replyType;
+    public String getNotificationType() {
+        return notificationType;
     }
 
     public boolean isMap() {

@@ -85,9 +85,9 @@ public class Server {
         return lastError;
     }
 
-    public ServerReply waitForServerReply() {
+    public GameNotification waitForNotifications() {
         try {
-            return new ServerReply(in.readLine());
+            return new GameNotification(in.readLine());
         } catch (IOException e) {
             return null;
         }

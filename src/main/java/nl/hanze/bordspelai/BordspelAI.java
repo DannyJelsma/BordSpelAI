@@ -2,17 +2,21 @@ package nl.hanze.bordspelai;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import nl.hanze.bordspelai.events.NetEventManager;
+import nl.hanze.bordspelai.listeners.TestNetListener;
 import nl.hanze.bordspelai.net.ClientCommand;
+import nl.hanze.bordspelai.net.GameNotification;
 import nl.hanze.bordspelai.net.Server;
-import nl.hanze.bordspelai.net.ServerReply;
 
 public class BordspelAI extends Application {
 
     public static void main(String[] args) {
         // javafx
-        launch(args);
+        //launch(args);
 
         Server server = new Server("95.216.161.219", 7789);
+        NetEventManager netEventMgr = new NetEventManager();
+        netEventMgr.register(new TestNetListener());
 
         if (server.connect()) {
             server.sendCommand(ClientCommand.LOGIN, "client");
@@ -25,20 +29,8 @@ public class BordspelAI extends Application {
 
         while (true) {
             // Debugging
-            printServerReply(server);
-        }
-    }
-
-    // Debugging
-    public static void printServerReply(Server server) {
-        ServerReply reply = server.waitForServerReply();
-
-        if (reply.isList()) {
-            System.out.println(reply.getReplyType() + ": " + reply.getDataList());
-        }
-
-        if (reply.isMap()) {
-            System.out.println(reply.getReplyType() + ": " + reply.getDataMap());
+            GameNotification notification = server.waitForNotifications();
+            netEventMgr.notify(notification);
         }
     }
 
