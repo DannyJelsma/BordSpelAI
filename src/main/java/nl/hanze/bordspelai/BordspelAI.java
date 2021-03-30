@@ -17,9 +17,6 @@ public class BordspelAI extends Application {
     private static final Server server = new Server("95.216.161.219", 7789);
 
     public static void main(String[] args) {
-        // javafx
-        launch(args);
-
         NetEventManager netEventMgr = NetEventManager.getInstance();
         netEventMgr.register(new ChallengeReceiveListener());
         netEventMgr.register(new NetMessageListener());
@@ -29,6 +26,9 @@ public class BordspelAI extends Application {
             server.sendCommand(Command.SUBSCRIBE, "Tic-tac-toe");
         }
 
+        getThreadPool().submit(() -> launch(args));
+
+        // Moet als laatste runnen!
         getThreadPool().submit(() -> {
             //noinspection InfiniteLoopStatement
             while (true) {
