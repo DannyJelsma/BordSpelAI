@@ -1,5 +1,7 @@
 package nl.hanze.bordspelai.net;
 
+import nl.hanze.bordspelai.events.NetEventManager;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -68,11 +70,14 @@ public class Server {
             System.out.println("> " + commandString);
             String reply = in.readLine();
 
-            if (reply.equalsIgnoreCase("OK")) {
+            if (reply.equals("OK")) {
                 return true;
-            } else {
+            } else if (reply.startsWith("ERR")) {
                 lastError = reply.split(" ", 2)[1];
                 return false;
+            } else {
+                NetEventManager netEventMgr = NetEventManager.getInstance();
+                netEventMgr.notify(new GameNotification(reply));
             }
         } catch (IOException ex) {
             ex.printStackTrace();

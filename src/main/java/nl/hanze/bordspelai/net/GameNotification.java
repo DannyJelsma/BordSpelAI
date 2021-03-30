@@ -15,8 +15,6 @@ public class GameNotification {
     private void parse(String message) {
         String[] split = message.split(" ", 4);
 
-        System.out.println(Arrays.toString(split));
-
         if (!split[0].equals("SVR") || split.length < 4 || split[1].equals("HELP")) {
             return;
         }
