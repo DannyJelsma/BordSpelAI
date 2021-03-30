@@ -49,11 +49,7 @@ public class BordspelAI extends Application {
 
     @Override
     public void start(Stage stage) {
-        // Create the singleton.
-        SceneManager manager = new SceneManager(stage);
-        manager.switchScene("/views/login.fxml", new LoginController());
-
-        // Access the singleton
-        // SceneManager.getInstance().switchScene(path, controller);
+        SceneManager.setStage(stage);
+        SceneManager.switchScene("/views/login.fxml", new LoginController());
     }
 }

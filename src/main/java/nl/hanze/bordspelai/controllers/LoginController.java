@@ -12,6 +12,6 @@ public class LoginController implements Controller {
   private void login() {
     System.out.println("Username: " + username.getText());
 
-    SceneManager.getInstance().switchScene("/views/test.fxml", new LoginController());
+    SceneManager.switchScene("/views/test.fxml", new LoginController());
   }
 }
