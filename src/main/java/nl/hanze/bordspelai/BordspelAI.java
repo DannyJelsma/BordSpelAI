@@ -1,14 +1,17 @@
 package nl.hanze.bordspelai;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
+import nl.hanze.bordspelai.controllers.LoginController;
 import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.listeners.ChallengeReceiveListener;
 import nl.hanze.bordspelai.listeners.NetMessageListener;
 import nl.hanze.bordspelai.net.Command;
 import nl.hanze.bordspelai.net.GameNotification;
 import nl.hanze.bordspelai.net.Server;
-
 import java.util.concurrent.ForkJoinPool;
 
 public class BordspelAI extends Application {
@@ -48,8 +51,20 @@ public class BordspelAI extends Application {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
-        stage.setTitle("stfu");
-        stage.show();
+    public void start(Stage stage) {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/views/login.fxml"));
+        loader.setController(new LoginController());
+        Parent root;
+        try {
+            root = loader.load();
+            Scene scene = new Scene(root);
+            
+            stage.setScene(scene);
+            stage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
 }
