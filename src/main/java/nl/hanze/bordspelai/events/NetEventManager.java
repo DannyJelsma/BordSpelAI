@@ -1,6 +1,6 @@
 package nl.hanze.bordspelai.events;
 
-import nl.hanze.bordspelai.net.GameNotification;
+import nl.hanze.bordspelai.notifications.Notification;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,9 +29,11 @@ public class NetEventManager {
         listeners.remove(listener);
     }
 
-    public void notify(GameNotification notification) {
-        for (NetEventListener listener : listeners) {
-            listener.update(notification);
+    public void notify(Notification notification) {
+        if (notification != null) {
+            for (NetEventListener listener : listeners) {
+                listener.update(notification);
+            }
         }
     }
 }

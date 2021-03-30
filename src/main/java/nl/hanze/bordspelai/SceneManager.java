@@ -1,12 +1,12 @@
 package nl.hanze.bordspelai;
 
-import java.io.IOException;
-
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.hanze.bordspelai.controllers.Controller;
+
+import java.io.IOException;
 
 public class SceneManager {
   private static Stage stage;
@@ -19,7 +19,7 @@ public class SceneManager {
     FXMLLoader loader = new FXMLLoader();
     loader.setLocation(SceneManager.class.getResource(path));
     loader.setController(controller);
-    
+
     Parent root;
     try {
       root = loader.load();

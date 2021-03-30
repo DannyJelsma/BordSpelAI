@@ -6,9 +6,10 @@ import nl.hanze.bordspelai.controllers.LoginController;
 import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.listeners.ChallengeReceiveListener;
 import nl.hanze.bordspelai.listeners.NetMessageListener;
-import nl.hanze.bordspelai.net.Command;
-import nl.hanze.bordspelai.net.GameNotification;
+import nl.hanze.bordspelai.listeners.PlayerListUpdateListener;
+import nl.hanze.bordspelai.listeners.ResultListener;
 import nl.hanze.bordspelai.net.Server;
+import nl.hanze.bordspelai.notifications.Notification;
 
 import java.util.concurrent.ForkJoinPool;
 
@@ -20,23 +21,22 @@ public class BordspelAI extends Application {
         NetEventManager netEventMgr = NetEventManager.getInstance();
         netEventMgr.register(new ChallengeReceiveListener());
         netEventMgr.register(new NetMessageListener());
+        netEventMgr.register(new PlayerListUpdateListener());
+        netEventMgr.register(new ResultListener());
 
-        if (server.connect()) {
-            server.sendCommand(Command.LOGIN, "client");
-            server.sendCommand(Command.SUBSCRIBE, "Tic-tac-toe");
+        if (!server.connect()) {
+            throw new IllegalStateException("Could not connect to the server.");
         }
 
         getThreadPool().submit(() -> launch(args));
 
         // Moet als laatste runnen!
-        getThreadPool().submit(() -> {
-            //noinspection InfiniteLoopStatement
-            while (true) {
-                GameNotification notification = server.waitForNotifications();
+        //noinspection InfiniteLoopStatement
+        while (true) {
+            Notification notification = server.waitForNotifications();
 
-                netEventMgr.notify(notification);
-            }
-        }).join();
+            netEventMgr.notify(notification);
+        }
     }
 
     public static Server getServer() {

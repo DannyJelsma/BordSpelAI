@@ -1,9 +1,9 @@
 package nl.hanze.bordspelai.events;
 
-import nl.hanze.bordspelai.net.GameNotification;
+import nl.hanze.bordspelai.notifications.Notification;
 
 public interface NetEventListener {
 
-    void update(GameNotification notification);
+    void update(Notification notification);
 
 }

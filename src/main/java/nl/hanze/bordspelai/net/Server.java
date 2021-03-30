@@ -1,6 +1,9 @@
 package nl.hanze.bordspelai.net;
 
-import nl.hanze.bordspelai.events.NetEventManager;
+import nl.hanze.bordspelai.notifications.GameNotification;
+import nl.hanze.bordspelai.notifications.Notification;
+import nl.hanze.bordspelai.notifications.ResultNotification;
+import nl.hanze.bordspelai.notifications.ServerNotification;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,7 +18,6 @@ public class Server {
     private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
-    private String lastError;
 
     public Server(String ip, int port) {
         this.ip = ip;
@@ -28,8 +30,10 @@ public class Server {
             this.out = new PrintWriter(this.socket.getOutputStream(), true);
             this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
 
+            // Get rid of copyright
             in.readLine();
             in.readLine();
+
             return true;
         } catch (Exception ex) {
             return false;
@@ -45,30 +49,32 @@ public class Server {
         }
     }
 
-    public boolean sendCommand(Command command, String... params) {
-        try {
-            StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
+    public void sendCommand(Command command, String... params) {
+        //try {
+        StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
 
-            if (params != null) {
-                for (String param : params) {
-                    if (params.length > 1) {
-                        commandBuilder.append("\"");
-                    }
-
-                    commandBuilder.append(param);
-
-                    if (params.length > 1) {
-                        commandBuilder.append("\"");
-                    }
-
-                    commandBuilder.append(" ");
+        if (params != null) {
+            for (String param : params) {
+                if (params.length > 1) {
+                    commandBuilder.append("\"");
                 }
-            }
 
-            String commandString = commandBuilder.toString().trim();
-            out.println(commandString);
-            System.out.println("> " + commandString);
-            String reply = in.readLine();
+                commandBuilder.append(param);
+
+                if (params.length > 1) {
+                    commandBuilder.append("\"");
+                }
+
+                commandBuilder.append(" ");
+            }
+        }
+
+        String commandString = commandBuilder.toString().trim();
+        out.println(commandString);
+        System.out.println("> " + commandString);
+/*            String reply = in.readLine();
+
+            System.out.println("< " + reply);
 
             if (reply.equals("OK")) {
                 return true;
@@ -76,23 +82,37 @@ public class Server {
                 lastError = reply.split(" ", 2)[1];
                 return false;
             } else {
-                NetEventManager netEventMgr = NetEventManager.getInstance();
-                netEventMgr.notify(new GameNotification(reply));
+                // Voor het geval berichten in de verkeerde volgorde binnen komen.
+                NetEventManager manager = NetEventManager.getInstance();
+                if (reply.startsWith("SVR GAME")) {
+                    manager.notify(new GameNotification(reply));
+                } else if (reply.startsWith("SVR")) {
+                    manager.notify(new ServerNotification(reply));
+                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
+        }*/
+    }
+
+    public Notification waitForNotifications() {
+        String message = waitForMessage();
+
+        if (message.startsWith("SVR GAME")) {
+            return new GameNotification(message);
+        } else if (message.startsWith("SVR")) {
+            System.out.println(message);
+            return new ServerNotification(message);
+        } else if (message.startsWith("OK") || message.startsWith("ERR")) {
+            return new ResultNotification(message);
         }
 
-        return false;
+        return null;
     }
 
-    public String getLastError() {
-        return lastError;
-    }
-
-    public GameNotification waitForNotifications() {
+    public String waitForMessage() {
         try {
-            return new GameNotification(in.readLine());
+            return in.readLine();
         } catch (IOException e) {
             return null;
         }
