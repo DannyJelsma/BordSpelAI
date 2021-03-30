@@ -45,7 +45,7 @@ public class Server {
         }
     }
 
-    public boolean sendCommand(ClientCommand command, String... params) {
+    public boolean sendCommand(Command command, String... params) {
         try {
             StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
 

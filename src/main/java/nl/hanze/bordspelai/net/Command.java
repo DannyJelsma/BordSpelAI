@@ -1,6 +1,6 @@
 package nl.hanze.bordspelai.net;
 
-public enum ClientCommand {
+public enum Command {
 
     LOGIN("login"),
     LOGOUT("logout"),
@@ -14,7 +14,7 @@ public enum ClientCommand {
 
     private final String command;
 
-    ClientCommand(String command) {
+    Command(String command) {
         this.command = command;
     }
 
