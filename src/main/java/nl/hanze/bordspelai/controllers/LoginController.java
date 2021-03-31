@@ -5,8 +5,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
+import nl.hanze.bordspelai.enums.GameState;
+import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.managers.SceneManager;
-import nl.hanze.bordspelai.models.LoginModel;
 import nl.hanze.bordspelai.net.Server;
 
 public class LoginController implements Controller {
@@ -14,7 +15,7 @@ public class LoginController implements Controller {
   @FXML
   private TextField username;
 
-  public LoginController(LoginModel model) {
+  public LoginController() {
 
   }
 
@@ -24,6 +25,7 @@ public class LoginController implements Controller {
     System.out.println("Username: " + username.getText());
 
     if (server.sendCommand(Command.LOGIN, username.getText())) {
+      GameManager.getInstance().setState(GameState.LOBBY);
       SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
     } else {
       Alert alert = new Alert(Alert.AlertType.ERROR);
