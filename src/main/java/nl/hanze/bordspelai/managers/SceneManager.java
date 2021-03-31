@@ -1,14 +1,17 @@
-package nl.hanze.bordspelai;
+package nl.hanze.bordspelai.managers;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.hanze.bordspelai.controllers.Controller;
+import nl.hanze.bordspelai.models.LobbyModel;
 
 import java.io.IOException;
 
 public class SceneManager {
+
+  private static LobbyModel lobbyModel;
   private static Stage stage;
 
   public static void setStage(Stage newStage) {
@@ -30,5 +33,13 @@ public class SceneManager {
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public static LobbyModel getLobbyModel() {
+    if (lobbyModel == null) {
+      lobbyModel = new LobbyModel();
+    }
+
+    return lobbyModel;
   }
 }

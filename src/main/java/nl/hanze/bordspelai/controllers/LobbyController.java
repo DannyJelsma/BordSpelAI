@@ -1,15 +1,12 @@
 package nl.hanze.bordspelai.controllers;
 
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import nl.hanze.bordspelai.BordspelAI;
-import nl.hanze.bordspelai.listeners.PlayerListUpdateListener;
+import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.models.LobbyModel;
-import nl.hanze.bordspelai.net.Command;
 import nl.hanze.bordspelai.net.Server;
 
 public class LobbyController implements Controller {
@@ -31,23 +28,23 @@ public class LobbyController implements Controller {
 
     @FXML
     public void initialize() {
+        Server server = BordspelAI.getServer();
+
+        server.sendCommand(Command.GET_PLAYERLIST);
         BordspelAI.getThreadPool().submit(() -> Platform.runLater(this::updatePlayerList));
     }
 
     @FXML
     public void refresh() {
+        Server server = BordspelAI.getServer();
+
+        server.sendCommand(Command.GET_PLAYERLIST);
         BordspelAI.getThreadPool().submit(() -> Platform.runLater(this::updatePlayerList));
     }
 
     public void updatePlayerList() {
-        Server server = BordspelAI.getServer();
-        server.sendCommand(Command.GET_PLAYERLIST);
-
-        ObservableList<String> newPlayerList = FXCollections.observableArrayList(PlayerListUpdateListener.getPlayerList());
-        model.setPlayerList(newPlayerList);
-
         if (model.getPlayerList() != null) {
-            this.playerList.setItems(model.getPlayerList());
+            playerList.setItems(model.getPlayerList());
         }
     }
 }

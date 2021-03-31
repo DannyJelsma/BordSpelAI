@@ -1,5 +1,6 @@
 package nl.hanze.bordspelai.net;
 
+import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.notifications.GameNotification;
 import nl.hanze.bordspelai.notifications.Notification;
 import nl.hanze.bordspelai.notifications.ResultNotification;
@@ -15,64 +16,64 @@ public class Server {
 
     private final String ip;
     private final int port;
-    private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
+    private boolean waitingForCommand = false;
+    private String lastError;
 
     public Server(String ip, int port) {
         this.ip = ip;
         this.port = port;
+
+        connect();
     }
 
     public boolean connect() {
         try {
-            this.socket = new Socket(ip, port);
-            this.out = new PrintWriter(this.socket.getOutputStream(), true);
-            this.in = new BufferedReader(new InputStreamReader(this.socket.getInputStream()));
+            Socket socket = new Socket(ip, port);
+            this.out = new PrintWriter(socket.getOutputStream(), true);
+            this.in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 
-            // Get rid of copyright
+            // Get rid of copyright notice
             in.readLine();
             in.readLine();
 
             return true;
         } catch (Exception ex) {
+            ex.printStackTrace();
             return false;
         }
     }
 
-    public void close() {
-        try {
-            in.close();
-            out.close();
-            socket.close();
-        } catch (Exception ignored) {
-        }
+    public String getLastError() {
+        return lastError;
     }
 
-    public void sendCommand(Command command, String... params) {
-        //try {
-        StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
+    public boolean sendCommand(Command command, String... params) {
+        try {
+            waitingForCommand = true;
+            StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
 
-        if (params != null) {
-            for (String param : params) {
-                if (params.length > 1) {
-                    commandBuilder.append("\"");
+            if (params != null) {
+                for (String param : params) {
+                    if (params.length > 1) {
+                        commandBuilder.append("\"");
+                    }
+
+                    commandBuilder.append(param);
+
+                    if (params.length > 1) {
+                        commandBuilder.append("\"");
+                    }
+
+                    commandBuilder.append(" ");
                 }
-
-                commandBuilder.append(param);
-
-                if (params.length > 1) {
-                    commandBuilder.append("\"");
-                }
-
-                commandBuilder.append(" ");
             }
-        }
 
-        String commandString = commandBuilder.toString().trim();
-        out.println(commandString);
-        System.out.println("> " + commandString);
-/*            String reply = in.readLine();
+            String commandString = commandBuilder.toString().trim();
+            out.println(commandString);
+            String reply = in.readLine();
+            System.out.println("> " + commandString);
 
             System.out.println("< " + reply);
 
@@ -81,18 +82,24 @@ public class Server {
             } else if (reply.startsWith("ERR")) {
                 lastError = reply.split(" ", 2)[1];
                 return false;
-            } else {
-                // Voor het geval berichten in de verkeerde volgorde binnen komen.
-                NetEventManager manager = NetEventManager.getInstance();
-                if (reply.startsWith("SVR GAME")) {
-                    manager.notify(new GameNotification(reply));
-                } else if (reply.startsWith("SVR")) {
-                    manager.notify(new ServerNotification(reply));
-                }
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-        }*/
+        } finally {
+            waitingForCommand = false;
+        }
+
+        return false;
+    }
+
+    public boolean isReaderReady() {
+        try {
+            return in.ready() && !waitingForCommand;
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
+
+        return false;
     }
 
     public Notification waitForNotifications() {
