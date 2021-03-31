@@ -1,9 +1,11 @@
 package nl.hanze.bordspelai.managers;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.controllers.Controller;
 import nl.hanze.bordspelai.models.LobbyModel;
 
@@ -23,16 +25,17 @@ public class SceneManager {
     loader.setLocation(SceneManager.class.getResource(path));
     loader.setController(controller);
 
-    Parent root;
-    try {
-      root = loader.load();
-      Scene scene = new Scene(root);
+    BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
+      try {
+        Parent root = loader.load();
+        Scene scene = new Scene(root);
 
-      stage.setScene(scene);
-      stage.show();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+        stage.setScene(scene);
+        stage.show();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }));
   }
 
   public static LobbyModel getLobbyModel() {

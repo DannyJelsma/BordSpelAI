@@ -22,6 +22,7 @@ public class BordspelAI extends Application {
         netEventMgr.register(new PlayerListUpdateListener(SceneManager.getLobbyModel()));
         netEventMgr.register(new TurnChangeListener());
         netEventMgr.register(new WinLossListener());
+        netEventMgr.register(new MatchStartListener());
 
         if (!server.connect()) {
             throw new IllegalStateException("Could not connect to the server.");

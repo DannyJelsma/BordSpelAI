@@ -22,15 +22,13 @@ public class PlayerListUpdateListener implements NetEventListener {
             GameManager manager = GameManager.getInstance();
             List<String> playerList = notification.getDataList();
 
-            for (String player : playerList) {
-                if (player.equalsIgnoreCase(manager.getUsername())) {
-                    playerList.remove(player);
-                    playerList.add(player + " (You)");
-                }
-            }
+            if (playerList != null) {
+                playerList.remove(manager.getUsername());
+                playerList.add(manager.getUsername() + " (You)");
 
-            Collections.sort(playerList);
-            model.setPlayerList(playerList);
+                Collections.sort(playerList);
+                model.setPlayerList(playerList);
+            }
         }
     }
 }

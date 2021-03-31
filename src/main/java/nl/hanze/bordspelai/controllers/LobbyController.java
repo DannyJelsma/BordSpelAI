@@ -61,55 +61,57 @@ public class LobbyController implements Controller {
         GameManager manager = GameManager.getInstance();
         String playerToChallenge = playerList.getSelectionModel().getSelectedItem();
 
-        BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
-            if (playerToChallenge.equalsIgnoreCase(manager.getUsername() + " (You)")) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
+        if (playerToChallenge != null) {
+            BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
+                if (playerToChallenge.equalsIgnoreCase(manager.getUsername() + " (You)")) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
 
-                alert.setTitle("Oops!");
-                alert.setHeaderText(null);
-                alert.setContentText("You can't challenge yourself...");
-                alert.show();
-            } else {
-                ButtonType reversiButton = new ButtonType("Othello/Reversi");
-                ButtonType tttButton = new ButtonType("Tic-tac-toe");
-                Alert gameSelectAlert = new Alert(Alert.AlertType.NONE);
-                gameSelectAlert.setTitle("Game selection");
-                gameSelectAlert.setHeaderText(null);
-                gameSelectAlert.setContentText("What game do you want to play?");
-                gameSelectAlert.getButtonTypes().setAll(reversiButton, tttButton);
-                Optional<ButtonType> buttonResult = gameSelectAlert.showAndWait();
+                    alert.setTitle("Oops!");
+                    alert.setHeaderText(null);
+                    alert.setContentText("You can't challenge yourself...");
+                    alert.show();
+                } else {
+                    ButtonType reversiButton = new ButtonType("Othello/Reversi");
+                    ButtonType tttButton = new ButtonType("Tic-tac-toe");
+                    Alert gameSelectAlert = new Alert(Alert.AlertType.NONE);
+                    gameSelectAlert.setTitle("Game selection");
+                    gameSelectAlert.setHeaderText(null);
+                    gameSelectAlert.setContentText("What game do you want to play?");
+                    gameSelectAlert.getButtonTypes().setAll(reversiButton, tttButton);
+                    Optional<ButtonType> buttonResult = gameSelectAlert.showAndWait();
 
-                if (buttonResult.isPresent()) {
-                    Game game;
+                    if (buttonResult.isPresent()) {
+                        Game game;
 
-                    if (buttonResult.get().equals(reversiButton)) {
-                        game = Game.REVERSI;
-                    } else if (buttonResult.get().equals(tttButton)) {
-                        game = Game.TIC_TAC_TOE;
-                    } else {
-                        return;
-                    }
+                        if (buttonResult.get().equals(reversiButton)) {
+                            game = Game.REVERSI;
+                        } else if (buttonResult.get().equals(tttButton)) {
+                            game = Game.TIC_TAC_TOE;
+                        } else {
+                            return;
+                        }
 
-                    if (BordspelAI.getServer().sendCommand(Command.CHALLENGE, playerToChallenge, game.getGame())) {
-                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                        if (BordspelAI.getServer().sendCommand(Command.CHALLENGE, playerToChallenge, game.getGame())) {
+                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
-                        alert.setTitle("Challenge sent");
-                        alert.setHeaderText(null);
-                        alert.setContentText("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".");
-                        alert.getButtonTypes().remove(1);
-                        alert.show();
-                    } else {
-                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setTitle("Challenge sent");
+                            alert.setHeaderText(null);
+                            alert.setContentText("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".");
+                            alert.getButtonTypes().remove(1);
+                            alert.show();
+                        } else {
+                            Alert alert = new Alert(Alert.AlertType.ERROR);
 
-                        alert.setTitle("Failed to send challenge");
-                        alert.setHeaderText(null);
-                        alert.setContentText(BordspelAI.getServer().getLastError());
-                        alert.getButtonTypes().remove(1);
-                        alert.show();
+                            alert.setTitle("Failed to send challenge");
+                            alert.setHeaderText(null);
+                            alert.setContentText(BordspelAI.getServer().getLastError());
+                            alert.getButtonTypes().remove(1);
+                            alert.show();
+                        }
                     }
                 }
-            }
-        }));
+            }));
+        }
     }
 
     public void updatePlayerList() {
