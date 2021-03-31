@@ -5,9 +5,7 @@ import javafx.stage.Stage;
 import nl.hanze.bordspelai.controllers.GameController;
 import nl.hanze.bordspelai.controllers.LoginController;
 import nl.hanze.bordspelai.events.NetEventManager;
-import nl.hanze.bordspelai.listeners.ChallengeReceiveListener;
-import nl.hanze.bordspelai.listeners.NetMessageListener;
-import nl.hanze.bordspelai.listeners.PlayerListUpdateListener;
+import nl.hanze.bordspelai.listeners.*;
 import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.models.LoginModel;
 import nl.hanze.bordspelai.models.ReversiModel;
@@ -26,6 +24,8 @@ public class BordspelAI extends Application {
         netEventMgr.register(new ChallengeReceiveListener());
         netEventMgr.register(new NetMessageListener());
         netEventMgr.register(new PlayerListUpdateListener(SceneManager.getLobbyModel()));
+        netEventMgr.register(new TurnChangeListener());
+        netEventMgr.register(new WinLossListener());
 
         if (!server.connect()) {
             throw new IllegalStateException("Could not connect to the server.");

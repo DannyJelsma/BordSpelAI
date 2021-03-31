@@ -1,0 +1,12 @@
+package nl.hanze.bordspelai.enums;
+
+public enum GameState {
+
+    LOBBY,
+    YOUR_TURN,
+    OPPONENT_TURN,
+    GAME_WON,
+    GAME_LOST,
+    GAME_TIE
+
+}
