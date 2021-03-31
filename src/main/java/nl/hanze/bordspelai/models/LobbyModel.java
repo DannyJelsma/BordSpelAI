@@ -3,6 +3,8 @@ package nl.hanze.bordspelai.models;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.List;
+
 public class LobbyModel implements Model {
 
     private ObservableList<String> playerList;
@@ -19,5 +21,7 @@ public class LobbyModel implements Model {
         this.playerList = playerList;
     }
 
-
+    public void setPlayerList(List<String> playerList) {
+        this.playerList = FXCollections.observableList(playerList);
+    }
 }
