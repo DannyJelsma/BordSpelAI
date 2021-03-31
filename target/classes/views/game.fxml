@@ -42,9 +42,7 @@
    <children>
       <BorderPane prefHeight="403.0" prefWidth="640.0">
          <center>
-            <GridPane alignment="CENTER" maxHeight="1.7976931348623157E308"
-            prefHeight="393.0" prefWidth="640.0" BorderPane.alignment="CENTER" fx:id="grid">
-
+            <GridPane fx:id="grid" alignment="CENTER" maxHeight="1.7976931348623157E308" prefHeight="393.0" prefWidth="640.0" BorderPane.alignment="CENTER">
             </GridPane>
          </center>
       </BorderPane>
