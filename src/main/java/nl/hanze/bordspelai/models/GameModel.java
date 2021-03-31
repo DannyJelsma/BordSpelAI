@@ -1,6 +1,6 @@
 package nl.hanze.bordspelai.models;
 
-public class GameModel implements Model {
+public abstract class GameModel implements Model {
   private int size;
   private int[] board;
   public GameModel(int size) {
@@ -15,4 +15,7 @@ public class GameModel implements Model {
   public int[] getBoard() {
     return board;
   }
+
+  // public abstract int getBestMove();
+  // private abstract int[] getValidMoves();
 }

@@ -9,8 +9,9 @@ import nl.hanze.bordspelai.listeners.ChallengeReceiveListener;
 import nl.hanze.bordspelai.listeners.NetMessageListener;
 import nl.hanze.bordspelai.listeners.PlayerListUpdateListener;
 import nl.hanze.bordspelai.managers.SceneManager;
-import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.models.LoginModel;
+import nl.hanze.bordspelai.models.ReversiModel;
+import nl.hanze.bordspelai.models.TicTacToeModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
 
@@ -57,6 +58,6 @@ public class BordspelAI extends Application {
         SceneManager.setStage(stage);
         // SceneManager.switchScene("/views/login.fxml", new LoginController(new LoginModel()));
 
-        SceneManager.switchScene("/views/game.fxml", new GameController(new GameModel(3)));
+        SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel()));
     }
 }

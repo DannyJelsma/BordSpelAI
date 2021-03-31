@@ -24,7 +24,7 @@ public class GameController implements Controller {
 
       System.out.println("X " + row + ", Y " + column );
 
-      Button btn = new Button("asdas");
+      Button btn = new Button(row + " " + column);
       btn.setAlignment(Pos.CENTER);
       btn.maxWidth(Double.MAX_VALUE);
       btn.maxHeight(Double.MAX_VALUE);
