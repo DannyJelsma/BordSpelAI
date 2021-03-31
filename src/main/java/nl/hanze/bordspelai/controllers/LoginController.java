@@ -26,10 +26,12 @@ public class LoginController implements Controller {
 
     if (server.sendCommand(Command.LOGIN, username.getText())) {
       GameManager.getInstance().setState(GameState.LOBBY);
+      GameManager.getInstance().setUsername(username.getText());
       SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
     } else {
       Alert alert = new Alert(Alert.AlertType.ERROR);
 
+      alert.setHeaderText(null);
       alert.setContentText(server.getLastError());
       alert.show();
     }

@@ -90,13 +90,23 @@ public class LobbyController implements Controller {
                         return;
                     }
 
-                    BordspelAI.getServer().sendCommand(Command.CHALLENGE, playerToChallenge, game.getGame());
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    if (BordspelAI.getServer().sendCommand(Command.CHALLENGE, playerToChallenge, game.getGame())) {
+                        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
 
-                    alert.setTitle("Challenge sent");
-                    alert.setHeaderText(null);
-                    alert.setContentText("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".");
-                    alert.show();
+                        alert.setTitle("Challenge sent");
+                        alert.setHeaderText(null);
+                        alert.setContentText("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".");
+                        alert.getButtonTypes().remove(1);
+                        alert.show();
+                    } else {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+
+                        alert.setTitle("Failed to send challenge");
+                        alert.setHeaderText(null);
+                        alert.setContentText(BordspelAI.getServer().getLastError());
+                        alert.getButtonTypes().remove(1);
+                        alert.show();
+                    }
                 }
             }
         }));
