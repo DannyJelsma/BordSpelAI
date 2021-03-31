@@ -8,6 +8,7 @@ import nl.hanze.bordspelai.listeners.ChallengeReceiveListener;
 import nl.hanze.bordspelai.listeners.NetMessageListener;
 import nl.hanze.bordspelai.listeners.PlayerListUpdateListener;
 import nl.hanze.bordspelai.listeners.ResultListener;
+import nl.hanze.bordspelai.models.LoginModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
 
@@ -50,6 +51,6 @@ public class BordspelAI extends Application {
     @Override
     public void start(Stage stage) {
         SceneManager.setStage(stage);
-        SceneManager.switchScene("/views/login.fxml", new LoginController());
+        SceneManager.switchScene("/views/login.fxml", new LoginController(new LoginModel()));
     }
 }
