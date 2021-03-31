@@ -7,7 +7,7 @@ import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.listeners.ChallengeReceiveListener;
 import nl.hanze.bordspelai.listeners.NetMessageListener;
 import nl.hanze.bordspelai.listeners.PlayerListUpdateListener;
-import nl.hanze.bordspelai.listeners.ResultListener;
+import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.models.LoginModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
@@ -23,7 +23,6 @@ public class BordspelAI extends Application {
         netEventMgr.register(new ChallengeReceiveListener());
         netEventMgr.register(new NetMessageListener());
         netEventMgr.register(new PlayerListUpdateListener());
-        netEventMgr.register(new ResultListener());
 
         if (!server.connect()) {
             throw new IllegalStateException("Could not connect to the server.");
@@ -34,9 +33,11 @@ public class BordspelAI extends Application {
         // Moet als laatste runnen!
         //noinspection InfiniteLoopStatement
         while (true) {
-            Notification notification = server.waitForNotifications();
+            if (getServer().isReaderReady()) {
+                Notification notification = server.waitForNotifications();
 
-            netEventMgr.notify(notification);
+                netEventMgr.notify(notification);
+            }
         }
     }
 

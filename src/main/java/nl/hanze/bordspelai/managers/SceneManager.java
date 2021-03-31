@@ -1,4 +1,4 @@
-package nl.hanze.bordspelai;
+package nl.hanze.bordspelai.managers;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;

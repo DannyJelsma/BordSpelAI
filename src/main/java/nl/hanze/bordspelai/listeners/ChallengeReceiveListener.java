@@ -1,8 +1,8 @@
 package nl.hanze.bordspelai.listeners;
 
 import nl.hanze.bordspelai.BordspelAI;
+import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.events.NetEventListener;
-import nl.hanze.bordspelai.net.Command;
 import nl.hanze.bordspelai.notifications.Notification;
 
 import java.util.Map;

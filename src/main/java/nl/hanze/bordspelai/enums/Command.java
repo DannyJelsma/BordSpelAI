@@ -1,4 +1,4 @@
-package nl.hanze.bordspelai.net;
+package nl.hanze.bordspelai.enums;
 
 public enum Command {
 

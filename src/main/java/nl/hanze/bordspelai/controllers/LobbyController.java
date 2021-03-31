@@ -7,9 +7,9 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import nl.hanze.bordspelai.BordspelAI;
+import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.listeners.PlayerListUpdateListener;
 import nl.hanze.bordspelai.models.LobbyModel;
-import nl.hanze.bordspelai.net.Command;
 import nl.hanze.bordspelai.net.Server;
 
 public class LobbyController implements Controller {
