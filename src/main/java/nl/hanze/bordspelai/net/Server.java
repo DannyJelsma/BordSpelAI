@@ -28,6 +28,7 @@ public class Server {
         connect();
     }
 
+    @SuppressWarnings("resource")
     public boolean connect() {
         try {
             Socket socket = new Socket(ip, port);

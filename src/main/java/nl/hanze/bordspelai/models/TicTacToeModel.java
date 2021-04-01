@@ -1,9 +1,5 @@
 package nl.hanze.bordspelai.models;
 
-import nl.hanze.bordspelai.BordspelAI;
-import nl.hanze.bordspelai.enums.Command;
-import nl.hanze.bordspelai.net.Server;
-
 import java.util.ArrayList;
 import java.util.Random;
 

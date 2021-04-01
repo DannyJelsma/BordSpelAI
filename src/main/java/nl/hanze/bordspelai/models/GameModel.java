@@ -2,6 +2,10 @@ package nl.hanze.bordspelai.models;
 
 import java.util.ArrayList;
 
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 public abstract class GameModel implements Model {
 
     private int size;
@@ -43,6 +47,9 @@ public abstract class GameModel implements Model {
         else if (this.opponentUsername.equals(username)) {
           this.board[position] = this.opponentChar;
         }
+
+        // 'x', 'o'
+        // update the inserted char on the board
     }
 
     protected ArrayList<Integer> getAvailablePositions() {
@@ -53,6 +60,16 @@ public abstract class GameModel implements Model {
             }
         }
         return availablePositions;
+    }
+
+    // updates UI
+    public void updateMove(Button btn, int position, char move) {
+        int turn = 0;
+        String source = turn == 0 ? "/images/circle.png" : "/images/cross.png";
+        Image image = new Image(source, 40, 40, false, true);
+        btn.setStyle("-fx-background-color: #" + (turn == 0 ? "73ff5e" : "ff695e") + ";  -fx-background-radius: 12px;");
+        ImageView view = new ImageView(image);
+        btn.setGraphic(view);
     }
 
     public abstract int doBestMove();

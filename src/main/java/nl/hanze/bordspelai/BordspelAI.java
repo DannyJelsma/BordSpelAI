@@ -2,10 +2,12 @@ package nl.hanze.bordspelai;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
+import nl.hanze.bordspelai.controllers.GameController;
 import nl.hanze.bordspelai.controllers.LoginController;
 import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.listeners.*;
 import nl.hanze.bordspelai.managers.SceneManager;
+import nl.hanze.bordspelai.models.TicTacToeModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
 
@@ -53,8 +55,8 @@ public class BordspelAI extends Application {
     @Override
     public void start(Stage stage) {
         SceneManager.setStage(stage);
-        SceneManager.switchScene("/views/login.fxml", new LoginController());
+        // SceneManager.switchScene("/views/login.fxml", new LoginController());
 
-        //SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel()));
+        SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel(null, null)));
     }
 }
