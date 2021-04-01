@@ -104,7 +104,7 @@ public class GameController implements Controller, NetEventListener {
         if (notification.getNotificationType().equals("YOURTURN")) {
             doBestMove();
             try {
-                Thread.sleep(3000);
+                Thread.sleep(1500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

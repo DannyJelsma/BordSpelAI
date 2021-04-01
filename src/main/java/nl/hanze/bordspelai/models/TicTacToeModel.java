@@ -20,6 +20,7 @@ public class TicTacToeModel extends GameModel {
 
     public TicTacToeModel() {
         super(3);
+        super.reset();
 
         // set players char
         if (manager.getState() == GameState.YOUR_TURN) {

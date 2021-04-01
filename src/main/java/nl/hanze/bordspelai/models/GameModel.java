@@ -1,10 +1,10 @@
 package nl.hanze.bordspelai.models;
 
-import java.util.ArrayList;
-
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+
+import java.util.ArrayList;
 
 public abstract class GameModel implements Model {
 
@@ -43,7 +43,7 @@ public abstract class GameModel implements Model {
 
     protected ArrayList<Integer> getAvailablePositions() {
         ArrayList<Integer> availablePositions = new ArrayList<>();
-        for(int i=0;i<this.board.length;i++) {
+        for (int i = 0; i < this.board.length; i++) {
             if (this.board[i] == 0) {
                 availablePositions.add(i);
             }
@@ -52,5 +52,9 @@ public abstract class GameModel implements Model {
     }
 
     public abstract void updateMove(Button btn, int position);
+    public void reset() {
+        this.board = new char[size * size];
+    }
+
     public abstract int doBestMove();
 }
