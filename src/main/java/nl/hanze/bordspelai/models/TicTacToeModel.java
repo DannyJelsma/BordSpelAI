@@ -12,13 +12,13 @@ public class TicTacToeModel extends GameModel {
     private final char ownChar;
     private final char opponentChar;
 
-    private final GameManager manager = GameManager.getInstance();
-
     public TicTacToeModel() {
         super(3);
 
+        GameManager manager = GameManager.getInstance();
+
         // set players char
-        if (this.manager.getState() == GameState.YOUR_TURN) {
+        if (manager.getState() == GameState.YOUR_TURN) {
             this.ownChar = 'x';
             this.opponentChar = 'o';
         } else {
@@ -28,6 +28,7 @@ public class TicTacToeModel extends GameModel {
     }
 
     private char getCharByUsername(String username) {
+        GameManager manager = GameManager.getInstance();
         char playerChar;
         if (manager.getUsername().equals(username)) {
             playerChar = this.ownChar;
@@ -51,9 +52,9 @@ public class TicTacToeModel extends GameModel {
     }
 
     public void addMove(int position, String player) {
-        // update move at position in UI
-
+        GameManager manager = GameManager.getInstance();
         this.board[position] = this.getCharByUsername(manager.getCurrentPlayer());
+
         System.out.println(Arrays.toString(this.board));
     }
 }
