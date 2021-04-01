@@ -7,6 +7,7 @@ import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.net.Server;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class TicTacToeModel extends GameModel {
@@ -44,9 +45,9 @@ public class TicTacToeModel extends GameModel {
         ArrayList<Integer> availableMoves = this.getAvailablePositions();
         int bestMove = 0;
 
-        for (int move: availableMoves) {
-            bestMove = new Random().nextInt(availableMoves.size()); // random (valid) move
-        }
+//        for (int move: availableMoves) {
+            bestMove = availableMoves.get(new Random().nextInt(availableMoves.size())); // random (valid) move
+//        }
 
         this.board[bestMove] = this.getCharByUsername(manager.getCurrentPlayer());
         return bestMove;
@@ -61,5 +62,6 @@ public class TicTacToeModel extends GameModel {
                 this.board[position] = this.opponentChar;
                 break;
         }
+        System.out.println(Arrays.toString(this.board));
     }
 }
