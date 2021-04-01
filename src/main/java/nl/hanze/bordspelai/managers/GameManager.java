@@ -1,5 +1,6 @@
 package nl.hanze.bordspelai.managers;
 
+import nl.hanze.bordspelai.enums.Game;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.enums.Mode;
 
@@ -53,5 +54,15 @@ public class GameManager {
 
     public void setMode(Mode mode) {
         this.mode = mode;
+    }
+
+    public String getCurrentPlayer() {
+        String player = null;
+        if (this.state == GameState.YOUR_TURN) {
+            player = this.username;
+        } else if (this.state == GameState.OPPONENT_TURN) {
+            player = this.opponent;
+        }
+        return player;
     }
 }

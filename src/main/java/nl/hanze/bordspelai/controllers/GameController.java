@@ -9,6 +9,9 @@ import nl.hanze.bordspelai.enums.Mode;
 import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.managers.GameManager;
+import nl.hanze.bordspelai.enums.GameState;
+import nl.hanze.bordspelai.managers.GameManager;
+import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
@@ -21,6 +24,7 @@ public class GameController implements Controller, NetEventListener {
     private final Server server = BordspelAI.getServer();
 
     private final GameModel model;
+    private final GameManager manager = GameManager.getInstance();
 
     public GameController(GameModel model) {
         this.model = model;
@@ -40,9 +44,8 @@ public class GameController implements Controller, NetEventListener {
                 int clicked = size * i + j;
                 btn.setOnAction((event) -> {
 
-                    String username = "test"; // todo
-                    this.sendMove(clicked, username);
-                    this.model.addMove(clicked, username);
+                    this.sendMove(clicked);
+                    this.model.addMove(clicked);
 
                     System.out.println("click " + clicked);
                 });
@@ -66,14 +69,13 @@ public class GameController implements Controller, NetEventListener {
         // }
     }
 
-    public void sendMove(int move, String username) {
-        this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", username, move));
+    public void sendMove(int move) {
+        this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", this.manager.getCurrentPlayer(), move));
     }
 
     public void doBestMove() {
         int bestMove = model.doBestMove();
-        String username = "test"; // todo
-        this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", username, bestMove));
+        this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", this.manager.getUsername(), bestMove));
     }
 
     @Override
@@ -82,7 +84,7 @@ public class GameController implements Controller, NetEventListener {
             Map<String, String> data = notification.getDataMap();
             GameManager manager = GameManager.getInstance();
 
-            model.addMove(Integer.parseInt(data.get("MOVE")), data.get("PLAYER"));
+            model.addMove(Integer.parseInt(data.get("MOVE")));
 
             if (manager.getMode().equals(Mode.MULTIPLAYER) && data.get("PLAYER").equals(manager.getUsername())) {
                 doBestMove();
