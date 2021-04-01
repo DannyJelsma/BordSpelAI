@@ -35,12 +35,13 @@ public class LoginController implements Controller {
   private void login() {
     Server server = BordspelAI.getServer();
     GameManager manager = GameManager.getInstance();
+    Mode selectedMode = Mode.valueOf(mode.getSelectionModel().getSelectedItem().toUpperCase());
     System.out.println("Username: " + username.getText());
 
+    manager.setMode(selectedMode);
     if (server.sendCommand(Command.LOGIN, username.getText())) {
       manager.setState(GameState.LOBBY);
       manager.setUsername(username.getText());
-      manager.setMode(Mode.valueOf(mode.getSelectionModel().getSelectedItem().toUpperCase()));
       SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
     } else {
       Alert alert = new Alert(Alert.AlertType.ERROR);

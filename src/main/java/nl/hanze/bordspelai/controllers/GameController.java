@@ -9,9 +9,6 @@ import nl.hanze.bordspelai.enums.Mode;
 import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.managers.GameManager;
-import nl.hanze.bordspelai.enums.GameState;
-import nl.hanze.bordspelai.managers.GameManager;
-import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
@@ -70,12 +67,12 @@ public class GameController implements Controller, NetEventListener {
     }
 
     public void sendMove(int move) {
-        this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", this.manager.getCurrentPlayer(), move));
+        this.server.sendCommand(Command.MOVE, String.valueOf(move));
     }
 
     public void doBestMove() {
         int bestMove = model.doBestMove();
-        this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", this.manager.getUsername(), bestMove));
+        this.server.sendCommand(Command.MOVE, String.valueOf(bestMove));
     }
 
     @Override
@@ -90,6 +87,7 @@ public class GameController implements Controller, NetEventListener {
                 doBestMove();
             } else {
                 // TODO: Make AI move on the correct turn.
+
             }
         }
     }
