@@ -1,27 +1,28 @@
 package nl.hanze.bordspelai.controllers;
 
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
-import nl.hanze.bordspelai.managers.SceneManager;
+import nl.hanze.bordspelai.events.NetEventListener;
+import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.net.Server;
+import nl.hanze.bordspelai.notifications.Notification;
 
-public class GameController implements Controller {
+import java.util.Map;
+
+public class GameController implements Controller, NetEventListener {
     @FXML
     private GridPane grid;
     private final Server server = BordspelAI.getServer();
 
-    private GameModel model;
+    private final GameModel model;
 
     public GameController(GameModel model) {
         this.model = model;
+        NetEventManager.getInstance().register(this);
 //    this.server.sendCommand(Command.PLAY, "TicTacToe"); todo
     }
 
@@ -71,5 +72,14 @@ public class GameController implements Controller {
         int bestMove = model.doBestMove();
         String username = "test"; // todo
         this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", username, bestMove));
+    }
+
+    @Override
+    public void update(Notification notification) {
+        if (notification.getNotificationType().equals("MOVE")) {
+            Map<String, String> data = notification.getDataMap();
+
+            model.addMove(Integer.parseInt(data.get("MOVE")), data.get("PLAYER"));
+        }
     }
 }
