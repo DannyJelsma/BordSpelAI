@@ -27,6 +27,7 @@ public class GameController implements Controller {
     for(int i = 0; i < size; i++) {
       for(int j = 0; j < size; j++) {
         Button btn = new Button(i + " " + j);
+        btn.setMinSize(100, 100);
 
         int clicked = size * i + j;
         btn.setOnAction((event) -> {
