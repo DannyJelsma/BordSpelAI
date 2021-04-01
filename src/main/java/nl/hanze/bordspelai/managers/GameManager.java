@@ -7,6 +7,7 @@ public class GameManager {
     public static GameManager instance;
 
     private String username;
+    private String opponent;
     private GameState state;
 
     private GameManager() {
@@ -36,5 +37,11 @@ public class GameManager {
         this.username = username;
     }
 
+    public String getOpponent() {
+        return opponent;
+    }
 
+    public void setOpponent(String opponent) {
+        this.opponent = opponent;
+    }
 }
