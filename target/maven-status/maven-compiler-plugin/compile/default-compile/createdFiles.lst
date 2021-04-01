@@ -22,6 +22,7 @@ nl\hanze\bordspelai\net\Server.class
 nl\hanze\bordspelai\notifications\ResultNotification.class
 nl\hanze\bordspelai\notifications\Notification.class
 nl\hanze\bordspelai\models\GameModel.class
+nl\hanze\bordspelai\models\TicTacToeModel$1.class
 nl\hanze\bordspelai\managers\GameManager.class
 nl\hanze\bordspelai\managers\SceneManager.class
 nl\hanze\bordspelai\models\ReversiModel.class
