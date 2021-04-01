@@ -87,8 +87,6 @@ public class GameController implements Controller, NetEventListener {
     public void update(Notification notification) {
         updateTurnState(notification);
 
-        System.out.println(GameManager.getInstance().getState());
-
         if (notification.getNotificationType().equals("MOVE")) {
             Map<String, String> data = notification.getDataMap();
 
@@ -125,8 +123,6 @@ public class GameController implements Controller, NetEventListener {
             } else {
                 manager.setState(GameState.OPPONENT_TURN);
             }
-
-            model.updatePlayerChars();
         }
 
         if (notification.getNotificationType().equals("MOVE")) {

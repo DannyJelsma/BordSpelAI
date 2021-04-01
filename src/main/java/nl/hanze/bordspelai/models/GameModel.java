@@ -56,6 +56,4 @@ public abstract class GameModel implements Model {
     }
 
     public abstract int doBestMove();
-
-    public abstract void updatePlayerChars();
 }
