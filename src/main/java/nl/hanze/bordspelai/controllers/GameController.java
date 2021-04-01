@@ -83,11 +83,15 @@ public class GameController implements Controller, NetEventListener {
             model.addMove(Integer.parseInt(data.get("MOVE")));
         }
 
-        if (manager.getMode().equals(Mode.MULTIPLAYER) && notification.getNotificationType().equals("YOURTURN")) {
-            doBestMove();
+        if (manager.getMode().equals(Mode.MULTIPLAYER)) {
+            if (notification.getNotificationType().equals("YOURTURN")) {
+                doBestMove();
+            } else if (notification.getNotificationType().equals("MATCH")
+                    && notification.getDataMap().get("PLAYERTOMOVE").equals(manager.getUsername())) {
+                doBestMove();
+            }
         } else {
             // TODO: Make AI move on the correct turn.
-
         }
     }
 }
