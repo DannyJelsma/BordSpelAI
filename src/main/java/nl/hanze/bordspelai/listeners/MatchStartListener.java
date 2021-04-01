@@ -29,7 +29,7 @@ public class MatchStartListener implements NetEventListener {
                     alert.setContentText("A match of " + gameType + " has started. Playing against: " + opponent);
                     alert.show();
 
-                    SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel()));
+                    SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel("test", "test")));
                 }));
             }
         }
