@@ -7,6 +7,7 @@ import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.events.NetEventManager;
+import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
@@ -78,8 +79,13 @@ public class GameController implements Controller, NetEventListener {
     public void update(Notification notification) {
         if (notification.getNotificationType().equals("MOVE")) {
             Map<String, String> data = notification.getDataMap();
+            GameManager manager = GameManager.getInstance();
 
             model.addMove(Integer.parseInt(data.get("MOVE")), data.get("PLAYER"));
+
+            if (data.get("PLAYER").equals(manager.getUsername())) {
+                doBestMove();
+            }
         }
     }
 }
