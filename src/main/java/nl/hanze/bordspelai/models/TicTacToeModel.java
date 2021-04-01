@@ -1,10 +1,7 @@
 package nl.hanze.bordspelai.models;
 
-import nl.hanze.bordspelai.BordspelAI;
-import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.managers.GameManager;
-import nl.hanze.bordspelai.net.Server;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -46,22 +43,15 @@ public class TicTacToeModel extends GameModel {
         int bestMove = 0;
 
 //        for (int move: availableMoves) {
-            bestMove = availableMoves.get(new Random().nextInt(availableMoves.size())); // random (valid) move
+        bestMove = availableMoves.get(new Random().nextInt(availableMoves.size())); // random (valid) move
 //        }
 
         this.board[bestMove] = this.getCharByUsername(manager.getCurrentPlayer());
         return bestMove;
     }
 
-    public void addMove(int position) {
-        switch (this.manager.getState()) {
-            case YOUR_TURN:
-                this.board[position] = this.ownChar;
-                break;
-            case OPPONENT_TURN:
-                this.board[position] = this.opponentChar;
-                break;
-        }
+    public void addMove(int position, String player) {
+        this.board[position] = this.getCharByUsername(manager.getCurrentPlayer());
         System.out.println(Arrays.toString(this.board));
     }
 }

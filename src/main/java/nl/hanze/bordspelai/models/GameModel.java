@@ -1,7 +1,5 @@
 package nl.hanze.bordspelai.models;
 
-import nl.hanze.bordspelai.managers.GameManager;
-
 import java.util.ArrayList;
 
 public abstract class GameModel implements Model {
@@ -37,7 +35,7 @@ public abstract class GameModel implements Model {
         return board;
     }
 
-    public abstract void addMove(int move);
+    public abstract void addMove(int move, String player);
 
     protected ArrayList<Integer> getAvailablePositions() {
         ArrayList<Integer> availablePositions = new ArrayList<>();

@@ -5,7 +5,6 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
-import nl.hanze.bordspelai.enums.Mode;
 import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.managers.GameManager;
@@ -42,7 +41,7 @@ public class GameController implements Controller, NetEventListener {
                 btn.setOnAction((event) -> {
 
                     this.sendMove(clicked);
-                    this.model.addMove(clicked);
+                    this.model.addMove(clicked, manager.getUsername());
 
                     System.out.println("click " + clicked);
                 });
@@ -80,18 +79,15 @@ public class GameController implements Controller, NetEventListener {
         if (notification.getNotificationType().equals("MOVE")) {
             Map<String, String> data = notification.getDataMap();
 
-            model.addMove(Integer.parseInt(data.get("MOVE")));
+            model.addMove(Integer.parseInt(data.get("MOVE")), data.get("PLAYER"));
         }
 
-        if (manager.getMode().equals(Mode.MULTIPLAYER)) {
+        //if (manager.getMode().equals(Mode.MULTIPLAYER)) {
             if (notification.getNotificationType().equals("YOURTURN")) {
                 doBestMove();
-            } else if (notification.getNotificationType().equals("MATCH")
-                    && notification.getDataMap().get("PLAYERTOMOVE").equals(manager.getUsername())) {
-                doBestMove();
             }
-        } else {
-            // TODO: Make AI move on the correct turn.
-        }
+        //} else {
+        // TODO: Make AI move on the correct turn.
+        //}
     }
 }

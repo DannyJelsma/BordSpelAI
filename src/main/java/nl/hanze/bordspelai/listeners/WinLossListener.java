@@ -29,11 +29,11 @@ public class WinLossListener implements NetEventListener {
                     alert.showAndWait();
                     SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
                     break;
-                case "TIE":
+                case "DRAW":
                     manager.setState(GameState.GAME_TIE);
 
-                    alert.setTitle("It's a tie.");
-                    alert.setHeaderText("It's a tie.");
+                    alert.setTitle("It's a draw.");
+                    alert.setHeaderText("It's a draw.");
                     alert.setContentText(notification.getDataMap().get("COMMENT"));
                     alert.showAndWait();
                     SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));

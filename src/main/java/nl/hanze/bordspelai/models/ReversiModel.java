@@ -7,7 +7,7 @@ public class ReversiModel extends GameModel {
   }
 
   @Override
-  public void addMove(int move) {
+  public void addMove(int move, String player) {
 
   }
 
