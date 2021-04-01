@@ -5,6 +5,7 @@ import javafx.scene.control.Alert;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.controllers.GameController;
 import nl.hanze.bordspelai.events.NetEventListener;
+import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.models.TicTacToeModel;
@@ -32,7 +33,9 @@ public class MatchStartListener implements NetEventListener {
                     alert.show();
 
                     manager.setOpponent(opponent);
-                    SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel()));
+                    GameController gameController = new GameController(new TicTacToeModel());
+                    NetEventManager.getInstance().register(gameController);
+                    SceneManager.switchScene("/views/game.fxml", gameController);
                 }));
             }
         }

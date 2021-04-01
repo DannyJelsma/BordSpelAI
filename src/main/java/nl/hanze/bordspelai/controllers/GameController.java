@@ -5,8 +5,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
+import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
-import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.net.Server;
@@ -24,7 +24,6 @@ public class GameController implements Controller, NetEventListener {
 
     public GameController(GameModel model) {
         this.model = model;
-        NetEventManager.getInstance().register(this);
 //    this.server.sendCommand(Command.PLAY, "TicTacToe"); todo
     }
 
@@ -76,6 +75,10 @@ public class GameController implements Controller, NetEventListener {
 
     @Override
     public void update(Notification notification) {
+        updateTurnState(notification);
+
+        System.out.println(GameManager.getInstance().getState());
+
         if (notification.getNotificationType().equals("MOVE")) {
             Map<String, String> data = notification.getDataMap();
 
@@ -83,11 +86,38 @@ public class GameController implements Controller, NetEventListener {
         }
 
         //if (manager.getMode().equals(Mode.MULTIPLAYER)) {
-            if (notification.getNotificationType().equals("YOURTURN")) {
-                doBestMove();
+        if (notification.getNotificationType().equals("YOURTURN")) {
+            doBestMove();
+            try {
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
+        }
         //} else {
         // TODO: Make AI move on the correct turn.
         //}
+    }
+
+    private void updateTurnState(Notification notification) {
+        Map<String, String> data = notification.getDataMap();
+
+        if (notification.getNotificationType().equals("MATCH")) {
+            String toMove = data.get("PLAYERTOMOVE");
+
+            if (toMove.equals(manager.getUsername())) {
+                manager.setState(GameState.YOUR_TURN);
+            } else {
+                manager.setState(GameState.OPPONENT_TURN);
+            }
+        }
+
+        if (notification.getNotificationType().equals("MOVE")) {
+            if (data.get("PLAYER").equals(manager.getUsername())) {
+                manager.setState(GameState.OPPONENT_TURN);
+            } else if (data.get("PLAYER").equals(manager.getOpponent())) {
+                manager.setState(GameState.YOUR_TURN);
+            }
+        }
     }
 }
