@@ -12,12 +12,14 @@ import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 public class GameController implements Controller, NetEventListener {
     @FXML
     private GridPane grid;
     private final Server server = BordspelAI.getServer();
+    private ArrayList<Button> boardButtons = new ArrayList<>();
 
     private final GameModel model;
     private final GameManager manager = GameManager.getInstance();
@@ -26,6 +28,8 @@ public class GameController implements Controller, NetEventListener {
         this.model = model;
 //    this.server.sendCommand(Command.PLAY, "TicTacToe"); todo
     }
+
+    // public void update
     
     @FXML
     public void initialize() {
@@ -50,6 +54,8 @@ public class GameController implements Controller, NetEventListener {
                     System.out.println("click " + clicked);
                 });
                 grid.add(btn, j, i);
+
+                boardButtons.add(btn);
             }
         }
 
@@ -86,7 +92,12 @@ public class GameController implements Controller, NetEventListener {
         if (notification.getNotificationType().equals("MOVE")) {
             Map<String, String> data = notification.getDataMap();
 
-            model.addMove(Integer.parseInt(data.get("MOVE")), data.get("PLAYER"));
+            int position = Integer.parseInt(data.get("MOVE")); 
+            model.addMove(position, data.get("PLAYER"));
+            
+            // update ui from button index
+            Button btn = boardButtons.get(position);
+            model.updateMove(btn, position);
         }
 
         //if (manager.getMode().equals(Mode.MULTIPLAYER)) {

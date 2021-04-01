@@ -1,5 +1,7 @@
 package nl.hanze.bordspelai.models;
 
+import javafx.scene.control.Button;
+
 public class ReversiModel extends GameModel {
 
   public ReversiModel() {
@@ -16,6 +18,12 @@ public class ReversiModel extends GameModel {
     // todo: exeption when there are no valid moves
 
     return 0;
+  }
+
+  @Override
+  public void updateMove(Button btn, int position) {
+    // TODO Auto-generated method stub
+    
   }
 
 

@@ -51,14 +51,6 @@ public abstract class GameModel implements Model {
         return availablePositions;
     }
 
-    // updates UI
-    public void updateMove(Button btn, int position, char move) {
-        String source = move == 'o' ? "/images/circle.png" : "/images/cross.png";
-        Image image = new Image(source, 40, 40, false, true);
-        btn.setStyle("-fx-background-color: #" + (move == 'o' ? "73ff5e" : "ff695e") + ";  -fx-background-radius: 12px;");
-        ImageView view = new ImageView(image);
-        btn.setGraphic(view);
-    }
-
+    public abstract void updateMove(Button btn, int position);
     public abstract int doBestMove();
 }

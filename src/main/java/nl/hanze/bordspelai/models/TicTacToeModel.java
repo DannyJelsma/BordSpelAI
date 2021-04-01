@@ -7,15 +7,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import javafx.application.Platform;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 public class TicTacToeModel extends GameModel {
 
+    private GameManager manager = GameManager.getInstance();
     private final char ownChar;
     private final char opponentChar;
 
     public TicTacToeModel() {
         super(3);
-
-        GameManager manager = GameManager.getInstance();
 
         // set players char
         if (manager.getState() == GameState.YOUR_TURN) {
@@ -28,7 +32,6 @@ public class TicTacToeModel extends GameModel {
     }
 
     private char getCharByUsername(String username) {
-        GameManager manager = GameManager.getInstance();
         char playerChar;
         if (manager.getUsername().equals(username)) {
             playerChar = this.ownChar;
@@ -51,10 +54,23 @@ public class TicTacToeModel extends GameModel {
         return bestMove;
     }
 
+    
+
     public void addMove(int position, String player) {
-        GameManager manager = GameManager.getInstance();
         this.board[position] = this.getCharByUsername(manager.getCurrentPlayer());
 
         System.out.println(Arrays.toString(this.board));
+    }
+
+    @Override
+    public void updateMove(Button btn, int position) {
+        Platform.runLater(() -> {
+            char move = this.board[position];
+            String source = move == 'o' ? "/images/circle.png" : "/images/cross.png";
+            Image image = new Image(source, 40, 40, false, true);
+            btn.setStyle("-fx-background-color: #" + (move == 'o' ? "73ff5e" : "ff695e") + ";  -fx-background-radius: 12px;");
+            ImageView view = new ImageView(image);
+            btn.setGraphic(view);
+        });
     }
 }
