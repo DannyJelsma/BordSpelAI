@@ -14,6 +14,7 @@ public class TicTacToeModel extends GameModel {
 
     public TicTacToeModel() {
         super(3);
+        super.reset();
 
         GameManager manager = GameManager.getInstance();
 
