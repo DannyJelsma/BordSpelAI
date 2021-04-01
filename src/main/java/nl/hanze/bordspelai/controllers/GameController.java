@@ -5,6 +5,7 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.GridPane;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
+import nl.hanze.bordspelai.enums.Mode;
 import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.managers.GameManager;
@@ -83,8 +84,10 @@ public class GameController implements Controller, NetEventListener {
 
             model.addMove(Integer.parseInt(data.get("MOVE")), data.get("PLAYER"));
 
-            if (data.get("PLAYER").equals(manager.getUsername())) {
+            if (manager.getMode().equals(Mode.MULTIPLAYER) && data.get("PLAYER").equals(manager.getUsername())) {
                 doBestMove();
+            } else {
+                // TODO: Make AI move on the correct turn.
             }
         }
     }

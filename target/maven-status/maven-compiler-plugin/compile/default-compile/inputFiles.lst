@@ -11,7 +11,6 @@ C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\events\
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\enums\Command.java
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\events\NetEventListener.java
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\managers\SceneManager.java
-C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\listeners\MoveListener.java
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\models\Model.java
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\enums\GameState.java
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\models\LobbyModel.java
@@ -26,4 +25,5 @@ C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\control
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\notifications\ResultNotification.java
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\models\ReversiModel.java
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\listeners\ChallengeReceiveListener.java
+C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\enums\Mode.java
 C:\Users\Danny\IdeaProjects\BordSpelAI\src\main\java\nl\hanze\bordspelai\enums\Game.java

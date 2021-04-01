@@ -1,6 +1,7 @@
 package nl.hanze.bordspelai.managers;
 
 import nl.hanze.bordspelai.enums.GameState;
+import nl.hanze.bordspelai.enums.Mode;
 
 public class GameManager {
 
@@ -9,6 +10,7 @@ public class GameManager {
     private String username;
     private String opponent;
     private GameState state;
+    private Mode mode;
 
     private GameManager() {
     }
@@ -43,5 +45,13 @@ public class GameManager {
 
     public void setOpponent(String opponent) {
         this.opponent = opponent;
+    }
+
+    public Mode getMode() {
+        return mode;
+    }
+
+    public void setMode(Mode mode) {
+        this.mode = mode;
     }
 }
