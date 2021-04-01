@@ -41,7 +41,7 @@ public class GameController implements Controller, NetEventListener {
                 btn.setOnAction((event) -> {
 
                     this.sendMove(clicked);
-                    this.model.addMove(clicked, manager.getUsername());
+                    //this.model.addMove(clicked, manager.getUsername());
 
                     System.out.println("click " + clicked);
                 });

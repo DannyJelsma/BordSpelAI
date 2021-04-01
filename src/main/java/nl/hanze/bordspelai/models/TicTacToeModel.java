@@ -46,7 +46,7 @@ public class TicTacToeModel extends GameModel {
         bestMove = availableMoves.get(new Random().nextInt(availableMoves.size())); // random (valid) move
 //        }
 
-        this.board[bestMove] = this.getCharByUsername(manager.getCurrentPlayer());
+        //this.board[bestMove] = this.getCharByUsername(manager.getCurrentPlayer());
         return bestMove;
     }
 
