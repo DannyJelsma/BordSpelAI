@@ -2,8 +2,13 @@ package nl.hanze.bordspelai.models;
 
 public class ReversiModel extends GameModel {
 
-  public ReversiModel(String ownUsername, String opponentUsername) {
-    super(8, ownUsername, opponentUsername);
+  public ReversiModel() {
+    super(8);
+  }
+
+  @Override
+  public void addMove(int move, String player) {
+
   }
 
   @Override
@@ -12,4 +17,6 @@ public class ReversiModel extends GameModel {
 
     return 0;
   }
+
+
 }

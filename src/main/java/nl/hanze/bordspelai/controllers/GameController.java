@@ -1,29 +1,30 @@
 package nl.hanze.bordspelai.controllers;
 
 import javafx.fxml.FXML;
-import javafx.geometry.HPos;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
+import nl.hanze.bordspelai.events.NetEventListener;
+import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.net.Server;
+import nl.hanze.bordspelai.notifications.Notification;
 
-public class GameController implements Controller {
+import java.util.Map;
+
+public class GameController implements Controller, NetEventListener {
     @FXML
     private GridPane grid;
     private final Server server = BordspelAI.getServer();
 
-    private GameModel model;
+    private final GameModel model;
+    private final GameManager manager = GameManager.getInstance();
 
     public GameController(GameModel model) {
         this.model = model;
+        NetEventManager.getInstance().register(this);
 //    this.server.sendCommand(Command.PLAY, "TicTacToe"); todo
     }
     
@@ -42,9 +43,12 @@ public class GameController implements Controller {
                 btn.setStyle("-fx-background-color: #ECECEC; -fx-background-radius: 12px;");
                 btn.setPrefSize(80, 80);
         
-                int position = size * i + j;
+                int clicked = size * i + j;
                 btn.setOnAction((event) -> {
-                    
+                    this.sendMove(clicked);
+                    //this.model.addMove(clicked, manager.getUsername());
+
+                    System.out.println("click " + clicked);
                 });
                 grid.add(btn, j, i);
             }
@@ -65,13 +69,29 @@ public class GameController implements Controller {
         // }
     }
 
-    public void sendMove(int move, String username) {
-        this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", username, move));
+    public void sendMove(int move) {
+        this.server.sendCommand(Command.MOVE, String.valueOf(move));
     }
 
     public void doBestMove() {
         int bestMove = model.doBestMove();
-        String username = "test"; // todo
-        this.server.sendCommand(Command.MOVE, String.format("{PLAYER: \"%s\", MOVE: \"%d\", DETAILS: \"\"}", username, bestMove));
+        this.server.sendCommand(Command.MOVE, String.valueOf(bestMove));
+    }
+
+    @Override
+    public void update(Notification notification) {
+        if (notification.getNotificationType().equals("MOVE")) {
+            Map<String, String> data = notification.getDataMap();
+
+            model.addMove(Integer.parseInt(data.get("MOVE")), data.get("PLAYER"));
+        }
+
+        //if (manager.getMode().equals(Mode.MULTIPLAYER)) {
+            if (notification.getNotificationType().equals("YOURTURN")) {
+                doBestMove();
+            }
+        //} else {
+        // TODO: Make AI move on the correct turn.
+        //}
     }
 }

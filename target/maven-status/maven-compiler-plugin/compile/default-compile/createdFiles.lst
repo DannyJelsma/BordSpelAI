@@ -12,6 +12,7 @@ nl\hanze\bordspelai\controllers\LoginController.class
 nl\hanze\bordspelai\models\Model.class
 nl\hanze\bordspelai\notifications\GameNotification.class
 nl\hanze\bordspelai\listeners\NetMessageListener.class
+nl\hanze\bordspelai\enums\Mode.class
 nl\hanze\bordspelai\controllers\Controller.class
 nl\hanze\bordspelai\models\TicTacToeModel.class
 nl\hanze\bordspelai\listeners\TurnChangeListener.class

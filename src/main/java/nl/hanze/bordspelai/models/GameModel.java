@@ -9,25 +9,26 @@ import javafx.scene.image.ImageView;
 public abstract class GameModel implements Model {
 
     private int size;
-    private char[] board;
+    protected char[] board;
 
-    private final String ownUsername;
-    private final String opponentUsername;
-
-    private final char ownChar;
-    private final char opponentChar;
+//    private final String ownUsername;
+//    private final String opponentUsername;
+//
+//    private final char ownChar;
+//    private final char opponentChar;
 
     private ArrayList<Integer> availableMoves;
 
-    public GameModel(int size, String ownUsername, String opponentUsername) {
+    public GameModel(int size) {
         this.size = size;
         this.board = new char[size * size];
 
-        this.ownUsername = ownUsername;
-        this.opponentUsername = opponentUsername;
-
-        this.ownChar = 'x';
-        this.opponentChar = 'o';
+//        GameManager manager = GameManager.getInstance();
+//        this.ownUsername = manager.getUsername();
+//        this.opponentUsername = manager.getOpponent();
+//
+//        this.ownChar = 'x';
+//        this.opponentChar = 'o';
     }
 
     public int getSize() {
@@ -38,19 +39,7 @@ public abstract class GameModel implements Model {
         return board;
     }
 
-    public void addMove(int position, String username) {
-        // add own char to board
-        if (this.ownUsername.equals(username)) {
-            this.board[position] = this.ownChar;
-        }
-        // add opponent char to board
-        else if (this.opponentUsername.equals(username)) {
-          this.board[position] = this.opponentChar;
-        }
-
-        // 'x', 'o'
-        // update the inserted char on the board
-    }
+    public abstract void addMove(int move, String player);
 
     protected ArrayList<Integer> getAvailablePositions() {
         ArrayList<Integer> availablePositions = new ArrayList<>();
@@ -64,10 +53,9 @@ public abstract class GameModel implements Model {
 
     // updates UI
     public void updateMove(Button btn, int position, char move) {
-        int turn = 0;
-        String source = turn == 0 ? "/images/circle.png" : "/images/cross.png";
+        String source = move == 'o' ? "/images/circle.png" : "/images/cross.png";
         Image image = new Image(source, 40, 40, false, true);
-        btn.setStyle("-fx-background-color: #" + (turn == 0 ? "73ff5e" : "ff695e") + ";  -fx-background-radius: 12px;");
+        btn.setStyle("-fx-background-color: #" + (move == 'o' ? "73ff5e" : "ff695e") + ";  -fx-background-radius: 12px;");
         ImageView view = new ImageView(image);
         btn.setGraphic(view);
     }

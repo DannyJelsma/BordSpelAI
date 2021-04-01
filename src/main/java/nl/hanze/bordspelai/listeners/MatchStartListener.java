@@ -32,7 +32,7 @@ public class MatchStartListener implements NetEventListener {
                     alert.show();
 
                     manager.setOpponent(opponent);
-                    SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel("test", "test")));
+                    SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel()));
                 }));
             }
         }
