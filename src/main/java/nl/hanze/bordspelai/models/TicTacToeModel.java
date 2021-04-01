@@ -1,5 +1,9 @@
 package nl.hanze.bordspelai.models;
 
+import javafx.application.Platform;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.managers.GameManager;
 
@@ -7,29 +11,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-
 public class TicTacToeModel extends GameModel {
 
     private GameManager manager = GameManager.getInstance();
-    private final char ownChar;
-    private final char opponentChar;
+    private char ownChar;
+    private char opponentChar;
 
     public TicTacToeModel() {
         super(3);
         super.reset();
-
-        // set players char
-        if (manager.getState() == GameState.YOUR_TURN) {
-            this.ownChar = 'x';
-            this.opponentChar = 'o';
-        } else {
-            this.ownChar = 'o';
-            this.opponentChar = 'x';
-        }
     }
 
     private char getCharByUsername(String username) {
@@ -55,7 +45,18 @@ public class TicTacToeModel extends GameModel {
         return bestMove;
     }
 
-    
+    @Override
+    public void updatePlayerChars() {
+        // set players char
+        if (manager.getState() == GameState.YOUR_TURN) {
+            this.ownChar = 'x';
+            this.opponentChar = 'o';
+        } else {
+            this.ownChar = 'o';
+            this.opponentChar = 'x';
+        }
+    }
+
 
     public void addMove(int position, String player) {
         this.board[position] = this.getCharByUsername(manager.getCurrentPlayer());

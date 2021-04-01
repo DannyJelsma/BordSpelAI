@@ -1,8 +1,6 @@
 package nl.hanze.bordspelai.models;
 
 import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
 
@@ -52,9 +50,12 @@ public abstract class GameModel implements Model {
     }
 
     public abstract void updateMove(Button btn, int position);
+
     public void reset() {
         this.board = new char[size * size];
     }
 
     public abstract int doBestMove();
+
+    public abstract void updatePlayerChars();
 }

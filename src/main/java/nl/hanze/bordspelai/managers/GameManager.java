@@ -57,6 +57,7 @@ public class GameManager {
 
     public String getCurrentPlayer() {
         String player = null;
+
         if (this.state == GameState.YOUR_TURN) {
             player = this.username;
         } else if (this.state == GameState.OPPONENT_TURN) {

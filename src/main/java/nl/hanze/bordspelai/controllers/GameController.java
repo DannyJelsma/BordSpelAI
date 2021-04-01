@@ -94,7 +94,7 @@ public class GameController implements Controller, NetEventListener {
 
             int position = Integer.parseInt(data.get("MOVE")); 
             model.addMove(position, data.get("PLAYER"));
-            
+
             // update ui from button index
             Button btn = boardButtons.get(position);
             model.updateMove(btn, position);
@@ -102,12 +102,12 @@ public class GameController implements Controller, NetEventListener {
 
         //if (manager.getMode().equals(Mode.MULTIPLAYER)) {
         if (notification.getNotificationType().equals("YOURTURN")) {
-            doBestMove();
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            doBestMove();
         }
         //} else {
         // TODO: Make AI move on the correct turn.
@@ -125,6 +125,8 @@ public class GameController implements Controller, NetEventListener {
             } else {
                 manager.setState(GameState.OPPONENT_TURN);
             }
+
+            model.updatePlayerChars();
         }
 
         if (notification.getNotificationType().equals("MOVE")) {

@@ -21,9 +21,14 @@ public class ReversiModel extends GameModel {
   }
 
   @Override
+  public void updatePlayerChars() {
+
+  }
+
+  @Override
   public void updateMove(Button btn, int position) {
     // TODO Auto-generated method stub
-    
+
   }
 
 
