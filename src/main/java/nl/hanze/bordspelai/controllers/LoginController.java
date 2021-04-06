@@ -12,6 +12,7 @@ import nl.hanze.bordspelai.enums.Mode;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.net.Server;
+import nl.hanze.bordspelai.views.LobbyView;
 
 public class LoginController implements Controller {
 
@@ -42,7 +43,8 @@ public class LoginController implements Controller {
     if (server.sendCommand(Command.LOGIN, username.getText())) {
       manager.setState(GameState.LOBBY);
       manager.setUsername(username.getText());
-      SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
+      LobbyView view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
+      SceneManager.switchScene(view);
     } else {
       Alert alert = new Alert(Alert.AlertType.ERROR);
 

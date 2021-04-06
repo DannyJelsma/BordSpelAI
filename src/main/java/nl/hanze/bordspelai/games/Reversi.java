@@ -1,17 +1,17 @@
-package nl.hanze.bordspelai.models;
+package nl.hanze.bordspelai.games;
 
 import javafx.scene.control.Button;
 
-public class ReversiModel extends GameModel {
+public class Reversi extends Game {
 
-  public ReversiModel() {
-    super(8);
-  }
+    public Reversi() {
+        super(8);
+    }
 
-  @Override
-  public void addMove(int move, String player) {
+    @Override
+    public void addMove(int move, String player) {
 
-  }
+    }
 
   @Override
   public int doBestMove() {

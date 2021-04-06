@@ -1,13 +1,12 @@
 package nl.hanze.bordspelai.managers;
 
 import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
-import nl.hanze.bordspelai.controllers.Controller;
 import nl.hanze.bordspelai.models.LobbyModel;
+import nl.hanze.bordspelai.views.View;
 
 import java.io.IOException;
 
@@ -20,14 +19,10 @@ public class SceneManager {
     stage = newStage;
   }
 
-  public static void switchScene(String path, Controller controller) {
-    FXMLLoader loader = new FXMLLoader();
-    loader.setLocation(SceneManager.class.getResource(path));
-    loader.setController(controller);
-
+  public static void switchScene(View view) {
     BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
       try {
-        Parent root = loader.load();
+        Parent root = view.getLoader().load();
         Scene scene = new Scene(root);
 
         stage.setScene(scene);

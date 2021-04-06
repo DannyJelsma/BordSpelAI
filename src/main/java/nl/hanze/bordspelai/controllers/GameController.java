@@ -7,8 +7,8 @@ import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
+import nl.hanze.bordspelai.games.Game;
 import nl.hanze.bordspelai.managers.GameManager;
-import nl.hanze.bordspelai.models.GameModel;
 import nl.hanze.bordspelai.net.Server;
 import nl.hanze.bordspelai.notifications.Notification;
 
@@ -21,21 +21,21 @@ public class GameController implements Controller, NetEventListener {
     private final Server server = BordspelAI.getServer();
     private ArrayList<Button> boardButtons = new ArrayList<>();
 
-    private final GameModel model;
+    private final Game game;
     private final GameManager manager = GameManager.getInstance();
 
-    public GameController(GameModel model) {
-        this.model = model;
+    public GameController(Game game) {
+        this.game = game;
 //    this.server.sendCommand(Command.PLAY, "TicTacToe"); todo
     }
 
     // public void update
-    
+
     @FXML
     public void initialize() {
 //        int board[] = model.getBoard();
 
-        int size = model.getSize();
+        int size = game.getSize();
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
@@ -79,7 +79,7 @@ public class GameController implements Controller, NetEventListener {
     }
 
     public void doBestMove() {
-        int bestMove = model.doBestMove();
+        int bestMove = game.doBestMove();
         this.server.sendCommand(Command.MOVE, String.valueOf(bestMove));
     }
 
@@ -90,12 +90,12 @@ public class GameController implements Controller, NetEventListener {
         if (notification.getNotificationType().equals("MOVE")) {
             Map<String, String> data = notification.getDataMap();
 
-            int position = Integer.parseInt(data.get("MOVE")); 
-            model.addMove(position, data.get("PLAYER"));
+            int position = Integer.parseInt(data.get("MOVE"));
+            game.addMove(position, data.get("PLAYER"));
 
             // update ui from button index
             Button btn = boardButtons.get(position);
-            model.updateMove(btn, position);
+            game.updateMove(btn, position);
         }
 
         //if (manager.getMode().equals(Mode.MULTIPLAYER)) {

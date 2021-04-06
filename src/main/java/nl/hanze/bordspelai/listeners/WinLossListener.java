@@ -9,6 +9,8 @@ import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.notifications.Notification;
+import nl.hanze.bordspelai.views.LobbyView;
+import nl.hanze.bordspelai.views.View;
 
 public class WinLossListener implements NetEventListener {
 
@@ -27,7 +29,6 @@ public class WinLossListener implements NetEventListener {
                     alert.setHeaderText("You lost the game...");
                     alert.setContentText(notification.getDataMap().get("COMMENT"));
                     alert.showAndWait();
-                    SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
                     break;
                 case "DRAW":
                     manager.setState(GameState.GAME_TIE);
@@ -36,7 +37,6 @@ public class WinLossListener implements NetEventListener {
                     alert.setHeaderText("It's a draw.");
                     alert.setContentText(notification.getDataMap().get("COMMENT"));
                     alert.showAndWait();
-                    SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
                     break;
                 case "WIN":
                     manager.setState(GameState.GAME_WON);
@@ -45,9 +45,13 @@ public class WinLossListener implements NetEventListener {
                     alert.setHeaderText("You won the game!");
                     alert.setContentText(notification.getDataMap().get("COMMENT"));
                     alert.showAndWait();
-                    SceneManager.switchScene("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
                     break;
+                default:
+                    return;
             }
+
+            View view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
+            SceneManager.switchScene(view);
         }));
     }
 }

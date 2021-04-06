@@ -1,4 +1,4 @@
-package nl.hanze.bordspelai.models;
+package nl.hanze.bordspelai.games;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-public class TicTacToeModel extends GameModel {
+public class TicTacToe extends Game {
 
     private final GameManager manager = GameManager.getInstance();
     private char ownChar;
     private char opponentChar;
     private final String startingPlayer;
 
-    public TicTacToeModel(String startingPlayer) {
+    public TicTacToe(String startingPlayer) {
         super(3);
         super.reset();
 

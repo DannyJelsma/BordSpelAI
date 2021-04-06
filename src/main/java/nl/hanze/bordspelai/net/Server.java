@@ -3,7 +3,6 @@ package nl.hanze.bordspelai.net;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.notifications.GameNotification;
 import nl.hanze.bordspelai.notifications.Notification;
-import nl.hanze.bordspelai.notifications.ResultNotification;
 import nl.hanze.bordspelai.notifications.ServerNotification;
 
 import java.io.BufferedReader;
@@ -109,10 +108,7 @@ public class Server {
         if (message.startsWith("SVR GAME")) {
             return new GameNotification(message);
         } else if (message.startsWith("SVR")) {
-            System.out.println(message);
             return new ServerNotification(message);
-        } else if (message.startsWith("OK") || message.startsWith("ERR")) {
-            return new ResultNotification(message);
         }
 
         return null;
