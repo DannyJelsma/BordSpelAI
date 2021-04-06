@@ -7,6 +7,7 @@ import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
+import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.games.Game;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.net.Server;
@@ -85,6 +86,12 @@ public class GameController implements Controller, NetEventListener {
 
     @Override
     public void update(Notification notification) {
+        if (manager.getState().equals(GameState.GAME_WON) || manager.getState().equals(GameState.GAME_TIE)
+                || manager.getState().equals(GameState.GAME_LOST) || manager.getState().equals(GameState.LOBBY)) {
+            NetEventManager.getInstance().unregister(this);
+            return;
+        }
+
         updateTurnState(notification);
 
         if (notification.getNotificationType().equals("MOVE")) {

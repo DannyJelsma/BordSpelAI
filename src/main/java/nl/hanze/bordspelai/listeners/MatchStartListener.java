@@ -31,17 +31,17 @@ public class MatchStartListener implements NetEventListener {
                     String opponent = dataMap.get("OPPONENT");
                     String toMove = dataMap.get("PLAYERTOMOVE");
 
-                    if (toMove.equalsIgnoreCase(manager.getUsername())) {
-                        manager.setState(GameState.YOUR_TURN);
-                    } else {
-                        manager.setState(GameState.OPPONENT_TURN);
-                    }
-
                     alert.setTitle("Match started");
                     alert.setHeaderText(null);
                     alert.setContentText("A match of " + gameType + " has started. Playing against: " + opponent);
                     alert.show();
                     manager.setOpponent(opponent);
+
+                    if (toMove.equalsIgnoreCase(opponent)) {
+                        manager.setState(GameState.OPPONENT_TURN);
+                    } else {
+                        manager.setState(GameState.YOUR_TURN);
+                    }
 
                     TicTacToe ticTacToe = new TicTacToe(dataMap.get("PLAYERTOMOVE"));
                     GameController gameController = new GameController(ticTacToe);
