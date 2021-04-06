@@ -44,6 +44,10 @@ public class NetEventManager {
             for (NetEventListener listener : new ArrayList<>(listeners)) {
                 listener.update(notification);
             }
+
+            for (NetEventListener listener : new ArrayList<>(gameListeners)) {
+                listener.update(notification);
+            }
         }
     }
 }
