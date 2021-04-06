@@ -1,5 +1,6 @@
 package nl.hanze.bordspelai.managers;
 
+import nl.hanze.bordspelai.controllers.GameController;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.enums.Mode;
 import nl.hanze.bordspelai.games.Game;
@@ -13,6 +14,7 @@ public class GameManager {
     private GameState state;
     private Mode mode;
     private Game game;
+    private GameController gameController;
 
     private GameManager() {
     }
@@ -70,5 +72,14 @@ public class GameManager {
             player = this.opponent;
         }
         return player;
+    }
+
+    public void setGameController(GameController gameController) {
+        this.gameController = gameController;
+    }
+
+
+    public GameController getGameController() {
+        return gameController;
     }
 }
