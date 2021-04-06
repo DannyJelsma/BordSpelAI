@@ -25,14 +25,6 @@ public class SceneManager {
         Parent root = view.getLoader().load();
         Scene scene = new Scene(root);
 
-        if (stage.getScene() != null) {
-          Stage stage2 = (Stage) stage.getScene().getWindow();
-
-          if (stage2 != null) {
-            stage2.close();
-          }
-        }
-
         stage.setScene(scene);
         stage.show();
       } catch (IOException e) {
