@@ -6,7 +6,6 @@ import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.controllers.LobbyController;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
-import nl.hanze.bordspelai.games.Game;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.notifications.Notification;
@@ -55,12 +54,6 @@ public class WinLossListener implements NetEventListener {
     }
 
     private void reset() {
-        Game game = GameManager.getInstance().getGame();
-
-        if (game != null) {
-            game.reset();
-        }
-
         View view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
         SceneManager.switchScene(view);
     }

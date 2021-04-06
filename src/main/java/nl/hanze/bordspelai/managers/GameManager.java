@@ -30,6 +30,7 @@ public class GameManager {
     }
 
     public void setState(GameState state) {
+        System.out.println("Set state to " + state);
         this.state = state;
     }
 
@@ -38,6 +39,7 @@ public class GameManager {
     }
 
     public void setUsername(String username) {
+        System.out.println("Set username to " + username);
         this.username = username;
     }
 
@@ -46,6 +48,7 @@ public class GameManager {
     }
 
     public void setOpponent(String opponent) {
+        System.out.println("Set opponent to " + opponent);
         this.opponent = opponent;
     }
 
@@ -54,6 +57,7 @@ public class GameManager {
     }
 
     public void setMode(Mode mode) {
+        System.out.println("Set mode to " + mode);
         this.mode = mode;
     }
 
@@ -66,13 +70,5 @@ public class GameManager {
             player = this.opponent;
         }
         return player;
-    }
-
-    public Game getGame() {
-        return game;
-    }
-
-    public void setGame(Game game) {
-        this.game = game;
     }
 }

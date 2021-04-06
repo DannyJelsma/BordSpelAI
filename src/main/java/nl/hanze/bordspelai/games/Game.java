@@ -51,9 +51,5 @@ public abstract class Game {
 
     public abstract void updateMove(Button btn, int position);
 
-    public void reset() {
-        this.board = new char[size * size];
-    }
-
     public abstract int doBestMove();
 }

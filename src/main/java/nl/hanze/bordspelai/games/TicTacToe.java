@@ -15,11 +15,10 @@ public class TicTacToe extends Game {
     private final GameManager manager = GameManager.getInstance();
     private char ownChar;
     private char opponentChar;
-    private final String startingPlayer;
+    private String startingPlayer;
 
     public TicTacToe(String startingPlayer) {
         super(3);
-        super.reset();
 
         this.startingPlayer = startingPlayer;
 

@@ -56,7 +56,5 @@ public class BordspelAI extends Application {
         View view = new LoginView("/views/login.fxml", new LoginController());
         SceneManager.setStage(stage);
         SceneManager.switchScene(view);
-
-        // SceneManager.switchScene("/views/game.fxml", new GameController(new TicTacToeModel(null, null)));
     }
 }
