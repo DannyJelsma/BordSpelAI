@@ -40,6 +40,10 @@ public abstract class Game {
     public abstract void addMove(int move, String player);
 
     protected ArrayList<Integer> getAvailablePositions() {
+        if (board.length >= (size * size)) {
+            this.board = new char[size * size];
+        }
+
         ArrayList<Integer> availablePositions = new ArrayList<>();
         for (int i = 0; i < this.board.length; i++) {
             if (this.board[i] == 0) {
