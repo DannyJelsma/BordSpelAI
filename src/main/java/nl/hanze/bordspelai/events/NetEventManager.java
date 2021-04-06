@@ -31,7 +31,8 @@ public class NetEventManager {
 
     public void notify(Notification notification) {
         if (notification != null) {
-            for (NetEventListener listener : listeners) {
+
+            for (NetEventListener listener : new ArrayList<>(listeners)) {
                 listener.update(notification);
             }
         }

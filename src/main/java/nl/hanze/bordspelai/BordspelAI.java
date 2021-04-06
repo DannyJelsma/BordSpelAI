@@ -22,7 +22,6 @@ public class BordspelAI extends Application {
         netEventMgr.register(new ChallengeReceiveListener());
         netEventMgr.register(new NetMessageListener());
         netEventMgr.register(new PlayerListUpdateListener(SceneManager.getLobbyModel()));
-        netEventMgr.register(new TurnChangeListener());
         netEventMgr.register(new WinLossListener());
         netEventMgr.register(new MatchStartListener());
 

@@ -35,8 +35,11 @@ public class MatchStartListener implements NetEventListener {
                     alert.show();
 
                     manager.setOpponent(opponent);
-                    GameController gameController = new GameController(new TicTacToe(dataMap.get("PLAYERTOMOVE")));
+                    TicTacToe ticTacToe = new TicTacToe(dataMap.get("PLAYERTOMOVE"));
+                    GameController gameController = new GameController(ticTacToe);
                     View view = new TicTacToeView("/views/game.fxml", gameController);
+
+                    GameManager.getInstance().setGame(ticTacToe);
                     NetEventManager.getInstance().register(gameController);
                     SceneManager.switchScene(view);
                 }));

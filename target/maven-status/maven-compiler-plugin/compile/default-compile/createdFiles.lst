@@ -19,7 +19,6 @@ nl\hanze\bordspelai\notifications\GameNotification.class
 nl\hanze\bordspelai\listeners\NetMessageListener.class
 nl\hanze\bordspelai\enums\Mode.class
 nl\hanze\bordspelai\controllers\Controller.class
-nl\hanze\bordspelai\listeners\TurnChangeListener.class
 nl\hanze\bordspelai\events\NetEventListener.class
 nl\hanze\bordspelai\listeners\MatchStartListener.class
 nl\hanze\bordspelai\net\Server.class
