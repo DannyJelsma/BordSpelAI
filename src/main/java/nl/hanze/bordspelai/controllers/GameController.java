@@ -28,6 +28,16 @@ public class GameController implements Controller, NetEventListener {
     public GameController(Game game) {
         this.game = game;
 //    this.server.sendCommand(Command.PLAY, "TicTacToe"); todo
+
+        if (manager.getState().equals(GameState.YOUR_TURN)) {
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            doBestMove();
+        }
     }
 
     // public void update
