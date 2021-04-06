@@ -101,7 +101,7 @@ public class GameController implements Controller, NetEventListener {
         //if (manager.getMode().equals(Mode.MULTIPLAYER)) {
         if (notification.getNotificationType().equals("YOURTURN")) {
             try {
-                Thread.sleep(1500);
+                Thread.sleep(1000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

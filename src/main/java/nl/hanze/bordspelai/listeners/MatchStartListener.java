@@ -29,14 +29,19 @@ public class MatchStartListener implements NetEventListener {
                     GameManager manager = GameManager.getInstance();
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
                     String opponent = dataMap.get("OPPONENT");
+                    String toMove = dataMap.get("PLAYERTOMOVE");
+
+                    if (toMove.equalsIgnoreCase(manager.getUsername())) {
+                        manager.setState(GameState.YOUR_TURN);
+                    } else {
+                        manager.setState(GameState.OPPONENT_TURN);
+                    }
 
                     alert.setTitle("Match started");
                     alert.setHeaderText(null);
                     alert.setContentText("A match of " + gameType + " has started. Playing against: " + opponent);
                     alert.show();
                     manager.setOpponent(opponent);
-                    // Fix for first move
-                    manager.setState(GameState.OPPONENT_TURN);
 
                     TicTacToe ticTacToe = new TicTacToe(dataMap.get("PLAYERTOMOVE"));
                     GameController gameController = new GameController(ticTacToe);
