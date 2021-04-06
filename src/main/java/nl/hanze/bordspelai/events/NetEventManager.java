@@ -9,6 +9,7 @@ public class NetEventManager {
 
     private static NetEventManager instance;
     private final List<NetEventListener> listeners = new ArrayList<>();
+    private final List<NetEventListener> gameListeners = new ArrayList<>();
 
     private NetEventManager() {
     }
@@ -27,6 +28,14 @@ public class NetEventManager {
 
     public void unregister(NetEventListener listener) {
         listeners.remove(listener);
+    }
+
+    public void registerGameListener(NetEventListener listener) {
+        gameListeners.add(listener);
+    }
+
+    public void unregisterGameListener(NetEventListener listener) {
+        gameListeners.remove(listener);
     }
 
     public void notify(Notification notification) {

@@ -98,7 +98,7 @@ public class GameController implements Controller, NetEventListener {
     public void update(Notification notification) {
         if (manager.getState().equals(GameState.GAME_WON) || manager.getState().equals(GameState.GAME_TIE)
                 || manager.getState().equals(GameState.GAME_LOST) || manager.getState().equals(GameState.LOBBY)) {
-            NetEventManager.getInstance().unregister(this);
+            NetEventManager.getInstance().unregisterGameListener(this);
             return;
         }
 
