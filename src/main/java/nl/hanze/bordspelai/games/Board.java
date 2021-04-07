@@ -40,7 +40,7 @@ public class Board implements Cloneable {
     }
 
     public boolean isPositionAvailable(int position) {
-        return position == 0;
+        return getPosition(position) == 0;
     }
 
     public void reset() {
