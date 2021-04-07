@@ -7,18 +7,10 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <BorderPane prefHeight="403.0" prefWidth="640.0">
+      <BorderPane>
          <center>
-            <GridPane fx:id="grid" alignment="CENTER" maxHeight="1.7976931348623157E308" prefHeight="393.0" prefWidth="640.0" style="-fx-background-color: #F6F6F6;" BorderPane.alignment="CENTER">
-            </GridPane>
+            <GridPane fx:id="grid" alignment="CENTER" maxHeight="1.7976931348623157E308" prefHeight="393.0" prefWidth="640.0" style="-fx-background-color: #F6F6F6;" BorderPane.alignment="CENTER" />
          </center>
-         <right>
-            <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ECECEC;" BorderPane.alignment="CENTER">
-               <children>
-                  <!-- <Label layoutX="14.0" layoutY="14.0" prefHeight="19.0" prefWidth="88.0" style="-fx-font-weight: bold; -fx-font-size: 13px;" text="Information" textFill="WHITE" /> -->
-               </children>
-            </Pane>
-         </right>
       </BorderPane>
    </children>
 </VBox>

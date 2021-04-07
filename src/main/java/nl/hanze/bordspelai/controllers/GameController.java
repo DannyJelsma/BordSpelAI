@@ -43,21 +43,26 @@ public class GameController implements Controller, NetEventListener {
     @FXML
     public void initialize() {
 //        int board[] = model.getBoard();
-
+        int baseAmount = 12;
         int size = game.getSize();
+        int cardSize = (baseAmount - size) * 10;
+        int gap = baseAmount - size;
 
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
 
                 Button btn = new Button("");
-                grid.setHgap(6);
-                grid.setVgap(6);
-                btn.setStyle("-fx-background-color: #ECECEC; -fx-background-radius: 12px;");
-                btn.setPrefSize(80, 80);
+                grid.setHgap(gap);
+                grid.setVgap(gap);
+                btn.setStyle("-fx-background-color: #ECECEC; -fx-background-radius: " + gap + "px;");
+                
+                btn.setPrefSize(cardSize, cardSize);
         
                 int clicked = size * i + j;
                 btn.setOnAction((event) -> {
-                    this.sendMove(clicked);
+                    game.updateMove(btn, clicked);
+
+                    // this.sendMove(clicked);
                     //this.model.addMove(clicked, manager.getUsername());
 
                     System.out.println("click " + clicked);

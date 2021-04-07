@@ -1,11 +1,15 @@
 package nl.hanze.bordspelai.games;
 
+import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 
 import java.util.ArrayList;
 
 public abstract class Game {
-
     private final int size;
     protected char[] board;
 
@@ -56,7 +60,45 @@ public abstract class Game {
         return availablePositions;
     }
 
-    public abstract void updateMove(Button btn, int position);
+    public void updateMove(Button btn, int position) {
+        Platform.runLater(() -> {
+            char move = this.board[position];
+            double imageSize = btn.getPrefWidth() * 0.5;
+            System.out.println(imageSize);
+
+            // test random move
+            // int randomNumber = new Random().nextInt(2);
+            // if(randomNumber == 0) {
+            //     move = 'o';
+            // } else move = 'x';
+
+            // might not be the cleanest way of solving the different gamemodes.
+            if(this instanceof Reversi) {
+                // we can just use circles here instead of changing images.
+                Circle circle = new Circle();
+                circle.setRadius(imageSize / 2 * 1.05);
+                circle.setFill(move == 'o' ? Color.valueOf("2e2b2b") : Color.valueOf("f2f0f0"));
+                btn.setStyle("-fx-background-color: #41bf62");
+
+                // red-green scheme
+                // circle.setFill(move == 'o' ? Color.valueOf("207041") : Color.valueOf("EA4128"));
+                // btn.setStyle("-fx-background-color: #DBCEA1");
+
+                circle.setStyle("-fx-effect: dropshadow(one-pass-box, rgba(0,0,0,0.2), 0, 1, 2, 2);");
+                // btn.setStyle("-fx-background-color: #" +(move == 'o' ? "3fc462" : "226634"));
+                // btn.setStyle("-fx-background-color: #" + (move == 'o' ? "ff695e" : "73ff5e"));
+                btn.setGraphic(circle);
+            } else {
+                String source = move == 'o' ? "/images/circle.png" : "/images/cross.png";
+                String backgroundColor = move == 'o' ? "73ff5e" : "ff695e";
+                Image image = new Image(source, imageSize, imageSize, false, true);
+                btn.setStyle("-fx-background-color: #" + backgroundColor + ";  -fx-background-radius: 12px;");
+                ImageView view = new ImageView(image);
+                btn.setGraphic(view);
+            }
+
+        });
+    };
 
     public abstract int doBestMove();
 }

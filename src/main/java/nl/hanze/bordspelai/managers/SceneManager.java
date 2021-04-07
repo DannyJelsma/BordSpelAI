@@ -33,6 +33,7 @@ public class SceneManager {
           }
         }
 
+        // stage.setMaximized(true);
         stage.setScene(scene);
         stage.show();
       } catch (IOException e) {

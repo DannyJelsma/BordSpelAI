@@ -1,9 +1,5 @@
 package nl.hanze.bordspelai.games;
 
-import javafx.application.Platform;
-import javafx.scene.control.Button;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import nl.hanze.bordspelai.managers.GameManager;
 
 import java.util.ArrayList;
@@ -63,17 +59,5 @@ public class TicTacToe extends Game {
         this.board[position] = this.getCharByUsername(manager.getCurrentPlayer());
 
         System.out.println(Arrays.toString(this.board));
-    }
-
-    @Override
-    public void updateMove(Button btn, int position) {
-        Platform.runLater(() -> {
-            char move = this.board[position];
-            String source = move == 'o' ? "/images/circle.png" : "/images/cross.png";
-            Image image = new Image(source, 40, 40, false, true);
-            btn.setStyle("-fx-background-color: #" + (move == 'o' ? "73ff5e" : "ff695e") + ";  -fx-background-radius: 12px;");
-            ImageView view = new ImageView(image);
-            btn.setGraphic(view);
-        });
     }
 }
