@@ -12,6 +12,26 @@ public class TicTacToe extends Game {
     }
 
     @Override
+    public ArrayList<Integer> getAvailablePositions() {
+        ArrayList<Integer> availablePositions = new ArrayList<>();
+        for (int i = 0; i < this.board.getSize(); i++) {
+            if (board.isPositionAvailable(i)) {
+                availablePositions.add(i);
+            }
+        }
+
+        System.out.println(availablePositions);
+
+        if (availablePositions.size() == 0) {
+            board.reset();
+
+            return getAvailablePositions();
+        }
+
+        return availablePositions;
+    }
+
+    @Override
     public int doBestMove() {
         ArrayList<Integer> availableMoves = this.getAvailablePositions();
         int bestMove = 0;
