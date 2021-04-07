@@ -116,6 +116,9 @@ public abstract class Game {
         board.setPosition(position, charToMove);
         updateMove(position);
         System.out.println(Arrays.toString(board.getBoard()));
+
+        System.out.println("================================ getAvailablePositions =========================================");
+        System.out.println(this.getAvailablePositions());
     }
 
     public void addMove(int position) {
