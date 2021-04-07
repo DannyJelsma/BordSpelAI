@@ -1,9 +1,6 @@
 package nl.hanze.bordspelai.views;
 
-import java.io.IOException;
-
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import nl.hanze.bordspelai.controllers.Controller;
 import nl.hanze.bordspelai.managers.SceneManager;
 
