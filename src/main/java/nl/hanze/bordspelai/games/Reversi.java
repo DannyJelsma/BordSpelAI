@@ -3,6 +3,8 @@ package nl.hanze.bordspelai.games;
 import nl.hanze.bordspelai.managers.GameManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Reversi extends Game {
@@ -37,7 +39,7 @@ public class Reversi extends Game {
         for (int pos = 0; pos < this.getBoard().length; pos++) {
             if (this.isValidMove(pos)) {
                 for (Direction dir : Direction.values()) {
-                    int flipAmount = getFlipAmount(dir, pos);
+                    int flipAmount = getFlippedChips(dir, pos).size();
 
                     if (flipAmount > 0) {
                         availablePositions.add(pos);
@@ -106,37 +108,53 @@ public class Reversi extends Game {
         return result;
     }
 
-    public int getFlipAmount(Direction direction, int pos) {
-        if (checkChip(direction, pos) != this.opponentChar) {
-            return 0;
+    @Override
+    public void addMove(int position, char charToMove) {
+        board.setPosition(position, charToMove);
+        updateMove(position);
+
+        for (Direction dir : Direction.values()) {
+            List<Integer> flipped = getFlippedChips(dir, position);
+
+            for (int pos : flipped) {
+                board.setPosition(pos, charToMove);
+            }
+        }
+
+        System.out.println(Arrays.toString(board.getBoard()));
+    }
+
+    public List<Integer> getFlippedChips(Direction direction, int pos) {
+        if (checkChip(direction, pos) != this.ownChar) {
+            return null;
         }
 
         if (pos < 0 || pos > 63) {
-            return 0;
+            return null;
         }
 
         int newPos = pos;
-        int counter = 0;
+        List<Integer> toFlip = new ArrayList<>();
         while (newPos > -1) {
             newPos = getChipPosition(direction, newPos);
             char chipChar = board.getPosition(newPos);
 
-            if (chipChar != this.opponentChar) {
-                if (chipChar == this.ownChar) {
-                    return counter;
+            toFlip.add(newPos);
+
+            if (chipChar != this.ownChar) {
+                if (chipChar == this.opponentChar) {
+                    return toFlip;
                 } else {
-                    return 0;
+                    return null;
                 }
             }
 
             if (newPos == -1) {
                 break;
             }
-
-            counter++;
         }
 
-        return counter;
+        return toFlip;
     }
 
     private enum Direction {
