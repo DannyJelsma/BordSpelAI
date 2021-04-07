@@ -2,7 +2,7 @@ package nl.hanze.bordspelai.games;
 
 public class Reversi extends Game {
 
-  public Reversi() {
+  public Reversi(String playertomove) {
     super(8);
   }
 
