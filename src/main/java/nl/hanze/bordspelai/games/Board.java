@@ -14,16 +14,15 @@ public class Board implements Cloneable {
     }
 
     public int getSize() {
+        return size * size;
+    }
+
+    public int getWidth() {
         return size;
     }
 
     public char[] getBoard() {
-        // To prevent accidentally passing by reference.
-        char[] clone = new char[size * size];
-
-        System.arraycopy(board, 0, clone, 0, 64);
-
-        return clone;
+        return board;
     }
 
     public void setBoard(char[] newBoard) {
