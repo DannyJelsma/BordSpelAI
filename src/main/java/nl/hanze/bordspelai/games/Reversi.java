@@ -39,11 +39,15 @@ public class Reversi extends Game {
         for (int pos = 0; pos < this.getBoard().length; pos++) {
             if (this.isValidMove(pos)) {
                 for (Direction dir : Direction.values()) {
-                    int flipAmount = getFlippedChips(dir, pos).size();
+                    List<Integer> flippedChips = getFlippedChips(dir, pos);
 
-                    if (flipAmount > 0) {
-                        availablePositions.add(pos);
-                        break;
+                    if (flippedChips != null) {
+                        int flipAmount = flippedChips.size();
+
+                        if (flipAmount > 0) {
+                            availablePositions.add(pos);
+                            break;
+                        }
                     }
                 }
             }
@@ -116,8 +120,10 @@ public class Reversi extends Game {
         for (Direction dir : Direction.values()) {
             List<Integer> flipped = getFlippedChips(dir, position);
 
-            for (int pos : flipped) {
-                board.setPosition(pos, charToMove);
+            if (flipped != null) {
+                for (int pos : flipped) {
+                    board.setPosition(pos, charToMove);
+                }
             }
         }
 
