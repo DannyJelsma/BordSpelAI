@@ -123,6 +123,7 @@ public class Reversi extends Game {
             if (flipped != null) {
                 for (int pos : flipped) {
                     board.setPosition(pos, charToMove);
+                    updateMove(pos);
                 }
             }
         }
