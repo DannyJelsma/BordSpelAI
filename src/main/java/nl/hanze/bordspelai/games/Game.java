@@ -68,7 +68,7 @@ public abstract class Game {
         
                 int clicked = size * i + j;
                 btn.setOnAction((event) -> {
-                    addMove(clicked);
+                    //addMove(clicked);
 
                     // this.sendMove(clicked);
                     //this.model.addMove(clicked, manager.getUsername());
@@ -114,9 +114,7 @@ public abstract class Game {
 
     public void addMove(int position, char charToMove) {
         board.setPosition(position, charToMove);
-        
         updateMove(position);
-
         System.out.println(Arrays.toString(board.getBoard()));
     }
 
