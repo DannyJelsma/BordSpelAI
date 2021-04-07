@@ -1,9 +1,6 @@
 package nl.hanze.bordspelai.games;
 
-import javafx.scene.control.Button;
 import nl.hanze.bordspelai.managers.GameManager;
-
-import nl.hanze.bordspelai.controllers.GameController;
 
 import java.util.ArrayList;
 
@@ -34,7 +31,7 @@ public class Reversi extends Game {
     }
 
     @Override
-    public ArrayList<Integer> getAvailablePositions() {
+    public ArrayList<Integer> getAvailablePositions(Board board) {
         ArrayList<Integer> availablePositions = new ArrayList<>();
         for (int pos = 0; pos < this.getBoard().length; pos++) {
             if (this.isValidMove(pos)) {

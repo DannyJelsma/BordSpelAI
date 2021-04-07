@@ -131,7 +131,7 @@ public class TicTacToe extends Game {
     }
 
     @Override
-    public ArrayList<Integer> getAvailablePositions(Board board) {
+    protected ArrayList<Integer> getAvailablePositions(Board board) {
         ArrayList<Integer> availablePositions = new ArrayList<>();
         for (int i = 0; i < board.getSize(); i++) {
             if (board.isPositionAvailable(i)) {
