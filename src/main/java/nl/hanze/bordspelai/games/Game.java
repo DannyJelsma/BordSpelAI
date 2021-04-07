@@ -98,11 +98,11 @@ public abstract class Game {
         return size;
     }
 
-    public char[] getBoard() {
-        return board.getBoard();
+    public Board getBoard() {
+        return board;
     }
 
-    private char getCharByUsername(String username) {
+    public char getCharByUsername(String username) {
         char playerChar;
         if (manager.getUsername().equals(username)) {
             playerChar = this.ownChar;
@@ -122,24 +122,7 @@ public abstract class Game {
         addMove(position, getCharByUsername(manager.getCurrentPlayer()));
     }
 
-    protected ArrayList<Integer> getAvailablePositions() {
-        ArrayList<Integer> availablePositions = new ArrayList<>();
-        for (int i = 0; i < this.board.getSize(); i++) {
-            if (board.isPositionAvailable(i)) {
-                availablePositions.add(i);
-            }
-        }
-
-        System.out.println(availablePositions);
-
-        if (availablePositions.size() == 0) {
-            board.reset();
-
-            return getAvailablePositions();
-        }
-
-        return availablePositions;
-    }
+    public abstract ArrayList<Integer> getAvailablePositions(Board board);
 
     public void updateMove(int position) {
         Platform.runLater(() -> {

@@ -1,11 +1,16 @@
 package nl.hanze.bordspelai.games;
 
-import nl.hanze.bordspelai.controllers.GameController;
+import java.util.ArrayList;
 
 public class Reversi extends Game {
 
   public Reversi(String startingPlayer) {
     super(8, startingPlayer);
+  }
+
+  @Override
+  public ArrayList<Integer> getAvailablePositions(Board board) {
+    return null;
   }
 
   @Override

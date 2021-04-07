@@ -3,7 +3,7 @@ package nl.hanze.bordspelai.games;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Board implements Cloneable {
+public class Board {
 
     private final int size;
     private char[] board;
@@ -11,6 +11,11 @@ public class Board implements Cloneable {
     public Board(int size) {
         this.size = size;
         this.board = new char[size * size];
+    }
+
+    public Board(int size, char[] board) {
+        this.size = size;
+        this.board = board;
     }
 
     public int getSize() {
@@ -33,6 +38,10 @@ public class Board implements Cloneable {
 
     public void setPosition(int position, char character) {
         board[position] = character;
+    }
+
+    public void clearPosition(int position) {
+        board[position] = 0;
     }
 
     public char getPosition(int position) {
@@ -60,5 +69,9 @@ public class Board implements Cloneable {
         int result = Objects.hash(size);
         result = 31 * result + Arrays.hashCode(board);
         return result;
+    }
+
+    public Board clone() {
+        return new Board(size, board.clone());
     }
 }
