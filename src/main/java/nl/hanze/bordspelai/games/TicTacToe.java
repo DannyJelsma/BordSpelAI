@@ -56,8 +56,8 @@ public class TicTacToe extends Game {
     }
 
     public void addMove(int position, String player) {
-        this.board[position] = this.getCharByUsername(manager.getCurrentPlayer());
+        board.setPosition(position, this.getCharByUsername(manager.getCurrentPlayer()));
 
-        System.out.println(Arrays.toString(this.board));
+        System.out.println(Arrays.toString(board.getBoard()));
     }
 }

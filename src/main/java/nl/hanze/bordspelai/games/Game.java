@@ -11,7 +11,7 @@ import java.util.ArrayList;
 
 public abstract class Game {
     private final int size;
-    protected char[] board;
+    protected Board board;
 
 //    private final String ownUsername;
 //    private final String opponentUsername;
@@ -23,7 +23,7 @@ public abstract class Game {
 
     public Game(int size) {
         this.size = size;
-        this.board = new char[size * size];
+        this.board = new Board(size);
 
 //        GameManager manager = GameManager.getInstance();
 //        this.ownUsername = manager.getUsername();
@@ -37,22 +37,18 @@ public abstract class Game {
         return size;
     }
 
-    public char[] getBoard() {
-        return board;
-    }
-
     public abstract void addMove(int move, String player);
 
     protected ArrayList<Integer> getAvailablePositions() {
         ArrayList<Integer> availablePositions = new ArrayList<>();
-        for (int i = 0; i < this.board.length; i++) {
-            if (this.board[i] == 0) {
+        for (int i = 0; i < this.board.getSize(); i++) {
+            if (board.isPositionAvailable(i)) {
                 availablePositions.add(i);
             }
         }
 
         if (availablePositions.size() == 0) {
-            this.board = new char[size * size];
+            board.reset();
 
             return getAvailablePositions();
         }
@@ -62,7 +58,7 @@ public abstract class Game {
 
     public void updateMove(Button btn, int position) {
         Platform.runLater(() -> {
-            char move = this.board[position];
+            char move = board.getPosition(position);
             double imageSize = btn.getPrefWidth() * 0.5;
             System.out.println(imageSize);
 
@@ -98,7 +94,7 @@ public abstract class Game {
             }
 
         });
-    };
+    }
 
     public abstract int doBestMove();
 }
