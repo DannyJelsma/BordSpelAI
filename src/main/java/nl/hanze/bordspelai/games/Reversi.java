@@ -3,6 +3,7 @@ package nl.hanze.bordspelai.games;
 import nl.hanze.bordspelai.managers.GameManager;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Reversi extends Game {
 
@@ -35,22 +36,33 @@ public class Reversi extends Game {
         ArrayList<Integer> availablePositions = new ArrayList<>();
         for (int pos = 0; pos < this.getBoard().length; pos++) {
             if (this.isValidMove(pos)) {
-                availablePositions.add(pos);
+                for (Direction dir : Direction.values()) {
+                    int flipAmount = getFlipAmount(dir, pos);
+
+                    if (flipAmount > 0) {
+                        availablePositions.add(pos);
+                        break;
+                    }
+                }
             }
         }
+
         return availablePositions;
     }
 
     @Override
     public int doBestMove() {
-        // todo: exeption when there are no valid moves
+        ArrayList<Integer> availablePositions = getAvailablePositions(board);
+        System.out.println(availablePositions);
 
-        return 0;
+        return availablePositions.get(ThreadLocalRandom.current().nextInt(0, availablePositions.size()));
     }
 
 
     private boolean isValidMove(int pos) {
         boolean result = false;
+
+        //System.out.println("Pos = " + pos);
 
         if (this.board.getPosition(pos) == NO_CHIP) {
 
@@ -94,79 +106,119 @@ public class Reversi extends Game {
         return result;
     }
 
+    public int getFlipAmount(Direction direction, int pos) {
+        if (checkChip(direction, pos) != this.opponentChar) {
+            return 0;
+        }
+
+        if (pos < 0 || pos > 63) {
+            return 0;
+        }
+
+        int newPos = pos;
+        int counter = 0;
+        while (newPos > -1) {
+            newPos = getChipPosition(direction, newPos);
+            char chipChar = board.getPosition(newPos);
+
+            if (chipChar != this.opponentChar) {
+                if (chipChar == this.ownChar) {
+                    return counter;
+                } else {
+                    return 0;
+                }
+            }
+
+            if (newPos == -1) {
+                break;
+            }
+
+            counter++;
+        }
+
+        return counter;
+    }
+
     private enum Direction {
         TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT, TOP_LEFT
     }
 
     private char checkChip(Direction direction, int pos) {
-        System.out.println("param pos "+pos);
+        int chipPos = getChipPosition(direction, pos);
+
+        if (chipPos == -1) {
+            return 0;
+        }
+
+        return board.getPosition(chipPos);
+    }
+
+    private int getChipPosition(Direction direction, int pos) {
+        //System.out.println("param pos "+pos);
         char player = NO_CHIP;
 
         boolean onTopColumn = pos < 9;
         boolean onRightRow = pos % 8 == 7;
-        boolean onBottomColumn = pos > 56;
+        boolean onBottomColumn = pos >= 56;
         boolean onLeftRow = pos % 8 == 0;
 
-        System.out.println("onTopColumn "+onTopColumn);
-        System.out.println("onRightRow "+onRightRow);
-        System.out.println("onBottomColumn "+onBottomColumn);
-        System.out.println("onLeftRow "+onLeftRow);
+        //System.out.println("onTopColumn "+onTopColumn);
+        //System.out.println("onRightRow "+onRightRow);
+        //System.out.println("onBottomColumn "+onBottomColumn);
+        //System.out.println("onLeftRow "+onLeftRow);
 
         switch (direction) {
             case TOP:
-                if (!onTopColumn) {
-                    player = this.board.getPosition(pos - 8);
-                    System.out.println("pos "+(pos - 8));
+                if (onTopColumn) {
+                    return -1;
                 }
-                break;
+
+                return pos - 8;
             case TOP_RIGHT:
-                if (!onTopColumn && !onRightRow) {
-                    player = this.board.getPosition(pos - 7);
-                    System.out.println("pos "+(pos - 7));
+                if (onTopColumn || onRightRow) {
+                    return -1;
                 }
-                break;
+
+                return pos - 7;
             case RIGHT:
-                if (!onRightRow) {
-                    player = this.board.getPosition(pos + 1);
-                    System.out.println("pos "+(pos + 1));
-
+                if (onRightRow) {
+                    return -1;
                 }
-                break;
+
+                return pos + 1;
             case BOTTOM_RIGHT:
-                if (!onRightRow && !onBottomColumn) {
-                    player = this.board.getPosition(pos + 9);
-                    System.out.println("pos "+(pos + 9));
+                if (onRightRow || onBottomColumn) {
+                    return -1;
                 }
-                break;
+
+                return pos + 9;
             case BOTTOM:
-                if (!onBottomColumn) {
-                    player = this.board.getPosition(pos + 8);
-                    System.out.println("pos "+(pos + 8));
-
+                if (onBottomColumn) {
+                    return -1;
                 }
-                break;
+
+                return pos + 8;
             case BOTTOM_LEFT:
-                if (!onBottomColumn && !onLeftRow) {
-                    player = this.board.getPosition(pos + 7);
-                    System.out.println("pos "+(pos + 7));
+                if (onBottomColumn || onLeftRow) {
+                    return -1;
                 }
-                break;
-            case LEFT:
-                if (!onLeftRow) {
-                    player = this.board.getPosition(pos - 1);
-                    System.out.println("pos "+(pos - 1));
 
+                return pos + 7;
+            case LEFT:
+                if (onLeftRow) {
+                    return -1;
                 }
-                break;
+
+                return pos - 1;
             case TOP_LEFT:
-                if (!onLeftRow && !onTopColumn) {
-                    player = this.board.getPosition(pos - 9);
-                    System.out.println("pos " + (pos - 9));
+                if (onLeftRow || onTopColumn) {
+                    return -1;
                 }
-                break;
+
+                return pos - 9;
         }
 
-        System.out.println("player "+player);
+        //System.out.println("player "+player);
         return player;
     }
 }
