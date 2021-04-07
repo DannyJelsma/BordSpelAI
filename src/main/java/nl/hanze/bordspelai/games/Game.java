@@ -19,7 +19,7 @@ public abstract class Game {
     private char ownChar;
     private char opponentChar;
     private final int size;
-    protected char[] board;
+    protected Board board;
 
 //    private final String ownUsername;
 //    private final String opponentUsername;
@@ -31,7 +31,7 @@ public abstract class Game {
 
     public Game(int size, String startingPlayer) {
         this.size = size;
-        this.board = new char[size * size];
+        this.board = new Board(size);
 
         // set players char
         if (startingPlayer.equals(manager.getUsername())) {
@@ -99,7 +99,7 @@ public abstract class Game {
     }
 
     public char[] getBoard() {
-        return board;
+        return board.getBoard();
     }
 
     private char getCharByUsername(String username) {
@@ -113,11 +113,11 @@ public abstract class Game {
     }
 
     public void addMove(int position, char charToMove) {
-        this.board[position] = charToMove;
+        board.setPosition(1, charToMove);
         
         updateMove(position);
 
-        System.out.println(Arrays.toString(this.board));
+        System.out.println(Arrays.toString(board.getBoard()));
     }
 
     public void addMove(int position) {
@@ -126,14 +126,14 @@ public abstract class Game {
 
     protected ArrayList<Integer> getAvailablePositions() {
         ArrayList<Integer> availablePositions = new ArrayList<>();
-        for (int i = 0; i < this.board.length; i++) {
-            if (this.board[i] == 0) {
+        for (int i = 0; i < this.board.getSize(); i++) {
+            if (board.isPositionAvailable(i)) {
                 availablePositions.add(i);
             }
         }
 
         if (availablePositions.size() == 0) {
-            this.board = new char[size * size];
+            board.reset();
 
             return getAvailablePositions();
         }
@@ -145,7 +145,7 @@ public abstract class Game {
         Platform.runLater(() -> {
             Button btn = buttons.get(position);
 
-            char move = this.board[position];
+            char move = board.getPosition(position);
             double imageSize = btn.getPrefWidth() * 0.5;
             System.out.println(imageSize);
 
@@ -180,7 +180,7 @@ public abstract class Game {
                 btn.setGraphic(view);
             }
         });
-    };
+    }
 
     public abstract int doBestMove();
 }
