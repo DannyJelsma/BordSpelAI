@@ -113,7 +113,7 @@ public abstract class Game {
     }
 
     public void addMove(int position, char charToMove) {
-        board.setPosition(1, charToMove);
+        board.setPosition(position, charToMove);
         
         updateMove(position);
 
@@ -131,6 +131,8 @@ public abstract class Game {
                 availablePositions.add(i);
             }
         }
+
+        System.out.println(availablePositions);
 
         if (availablePositions.size() == 0) {
             board.reset();
