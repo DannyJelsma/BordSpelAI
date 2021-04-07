@@ -67,7 +67,7 @@ public class Reversi extends Game {
              *  --+---+---+---+---+---+---+--
              *    |   |   |   |   |   |   |
              *  --+---+---+---+---+---+---+--
-             *    |   |   |   |   |   |   |
+             *    |   |   |   |   |   | X |
              *  --+---+---+---+---+---+---+--
              *    |   |   |   |   |   |   |
              */
@@ -155,9 +155,9 @@ public class Reversi extends Game {
 
                 }
             case TOP_LEFT:
-                if (!onLeftRow && onTopColumn) {
+                if (!onLeftRow && !onTopColumn) {
                     player = this.board.getPosition(pos - 9);
-                    System.out.println("pos "+(pos - 9));
+                    System.out.println("pos " + (pos - 9));
 
                 }
         }

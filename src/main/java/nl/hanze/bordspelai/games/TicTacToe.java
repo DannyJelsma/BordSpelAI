@@ -28,7 +28,7 @@ public class TicTacToe extends Game {
         for (int move : getAvailablePositions(this.board)) {
             Board newBoard = board.clone();
             newBoard.setPosition(move, getCharByUsername(manager.getUsername()));
-            int score = minimax(newBoard, false, 0);
+            int score = minimax(newBoard, false);
 
             if (score > highestScore) {
                 highestScore = score;
@@ -39,15 +39,15 @@ public class TicTacToe extends Game {
         return bestMove;
     }
 
-    private int minimax(Board board, boolean maximize, int depth) {
+    private int minimax(Board board, boolean maximize) {
         char winner = getWinner(board);
         char ourChar = getCharByUsername(manager.getUsername());
         char opponentChar = getCharByUsername(manager.getOpponent());
 
         if (winner == ourChar) {
-            return 100 / (depth + 1);
+            return 1;
         } else if (winner == opponentChar) {
-            return -100;
+            return -1;
         } else if (winner == 'd') {
             return 0;
         }
@@ -59,7 +59,7 @@ public class TicTacToe extends Game {
 
             for (int move : getAvailablePositions(newBoard)) {
                 newBoard.setPosition(move, ourChar);
-                int score = minimax(board, false, depth + 1);
+                int score = minimax(board, false);
                 bestScore = Math.max(score, bestScore);
             }
         } else {
@@ -68,7 +68,7 @@ public class TicTacToe extends Game {
 
             for (int move : getAvailablePositions(newBoard)) {
                 newBoard.setPosition(move, opponentChar);
-                int score = minimax(board, true, depth + 1);
+                int score = minimax(board, true);
                 bestScore = Math.min(score, bestScore);
             }
 
