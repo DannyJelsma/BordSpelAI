@@ -1,14 +1,11 @@
 package nl.hanze.bordspelai.games;
 
+import nl.hanze.bordspelai.controllers.GameController;
+
 public class Reversi extends Game {
 
-  public Reversi(String playertomove) {
-    super(8);
-  }
-
-  @Override
-  public void addMove(int move, String player) {
-
+  public Reversi(String startingPlayer) {
+    super(8, startingPlayer);
   }
 
   @Override

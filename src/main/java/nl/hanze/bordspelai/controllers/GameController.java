@@ -30,39 +30,16 @@ public class GameController implements Controller, NetEventListener {
     }
 
     // public void update
+    
+    public Button getButton(int position) {
+        return boardButtons.get(position);
+    }
 
+    // initialize is called upon scene switch
     @FXML
     public void initialize() {
-//        int board[] = model.getBoard();
-        int baseAmount = 12;
-        int size = game.getSize();
-        int cardSize = (baseAmount - size) * 10;
-        int gap = baseAmount - size;
-
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
-
-                Button btn = new Button("");
-                grid.setHgap(gap);
-                grid.setVgap(gap);
-                btn.setStyle("-fx-background-color: #ECECEC; -fx-background-radius: " + gap + "px;");
-                
-                btn.setPrefSize(cardSize, cardSize);
-        
-                int clicked = size * i + j;
-                btn.setOnAction((event) -> {
-                    game.updateMove(btn, clicked);
-
-                    // this.sendMove(clicked);
-                    //this.model.addMove(clicked, manager.getUsername());
-
-                    System.out.println("click " + clicked);
-                });
-                grid.add(btn, j, i);
-
-                boardButtons.add(btn);
-            }
-        }
+        // setup grid
+        game.setupBoard(grid);
 
         System.out.println(manager.getState());
         if (manager.getState().equals(GameState.YOUR_TURN)) {
@@ -105,11 +82,7 @@ public class GameController implements Controller, NetEventListener {
             Map<String, String> data = notification.getDataMap();
 
             int position = Integer.parseInt(data.get("MOVE"));
-            game.addMove(position, data.get("PLAYER"));
-
-            // update ui from button index
-            Button btn = boardButtons.get(position);
-            game.updateMove(btn, position);
+            game.addMove(position);
         }
 
         if (notification.getNotificationType().equals("YOURTURN")) {

@@ -78,7 +78,6 @@ public class GameManager {
         this.gameController = gameController;
     }
 
-
     public GameController getGameController() {
         return gameController;
     }

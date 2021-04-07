@@ -58,7 +58,7 @@ public class MatchStartListener implements NetEventListener {
                     gameController = new GameController(game);
                     view = new ReversiView(gameController);
                 }
-
+                
                 if (game != null) {
                     NetEventManager.getInstance().register(gameController);
                     manager.setGameController(gameController);

@@ -4,12 +4,20 @@ import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import nl.hanze.bordspelai.managers.GameManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public abstract class Game {
+    public final GameManager manager = GameManager.getInstance();
+
+    private ArrayList<Button> buttons = new ArrayList<>();
+    private char ownChar;
+    private char opponentChar;
     private final int size;
     protected char[] board;
 
@@ -21,9 +29,18 @@ public abstract class Game {
 
     private ArrayList<Integer> availableMoves;
 
-    public Game(int size) {
+    public Game(int size, String startingPlayer) {
         this.size = size;
         this.board = new char[size * size];
+
+        // set players char
+        if (startingPlayer.equals(manager.getUsername())) {
+            this.ownChar = 'x';
+            this.opponentChar = 'o';
+        } else {
+            this.ownChar = 'o';
+            this.opponentChar = 'x';
+        }
 
 //        GameManager manager = GameManager.getInstance();
 //        this.ownUsername = manager.getUsername();
@@ -33,6 +50,50 @@ public abstract class Game {
 //        this.opponentChar = 'o';
     }
 
+    public void setupBoard(GridPane grid) {
+        int baseAmount = 12;
+        int size = getSize();
+        int cardSize = (baseAmount - size) * 10;
+        int gap = baseAmount - size;
+
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+
+                Button btn = new Button("");
+                grid.setHgap(gap);
+                grid.setVgap(gap);
+                btn.setStyle("-fx-background-color: #ECECEC; -fx-background-radius: " + gap + "px;");
+                
+                btn.setPrefSize(cardSize, cardSize);
+        
+                int clicked = size * i + j;
+                btn.setOnAction((event) -> {
+                    addMove(clicked);
+
+                    // this.sendMove(clicked);
+                    //this.model.addMove(clicked, manager.getUsername());
+
+                    System.out.println("click " + clicked);
+                });
+                grid.add(btn, j, i);
+
+                buttons.add(btn);
+            }
+        }
+
+        // reversi needs 4 filled spots
+        if(this instanceof Reversi) {
+            addMove(27, 'x');
+            addMove(28, 'o');
+            addMove(35, 'o');
+            addMove(36, 'x');
+        }
+    }
+
+    // public String getStartingPlayer() {
+    //     return startingPlayer;
+    // }
+
     public int getSize() {
         return size;
     }
@@ -41,7 +102,27 @@ public abstract class Game {
         return board;
     }
 
-    public abstract void addMove(int move, String player);
+    private char getCharByUsername(String username) {
+        char playerChar;
+        if (manager.getUsername().equals(username)) {
+            playerChar = this.ownChar;
+        } else {
+            playerChar = this.opponentChar;
+        }
+        return playerChar;
+    }
+
+    public void addMove(int position, char charToMove) {
+        this.board[position] = charToMove;
+        
+        updateMove(position);
+
+        System.out.println(Arrays.toString(this.board));
+    }
+
+    public void addMove(int position) {
+        addMove(position, getCharByUsername(manager.getCurrentPlayer()));
+    }
 
     protected ArrayList<Integer> getAvailablePositions() {
         ArrayList<Integer> availablePositions = new ArrayList<>();
@@ -60,8 +141,10 @@ public abstract class Game {
         return availablePositions;
     }
 
-    public void updateMove(Button btn, int position) {
+    public void updateMove(int position) {
         Platform.runLater(() -> {
+            Button btn = buttons.get(position);
+
             char move = this.board[position];
             double imageSize = btn.getPrefWidth() * 0.5;
             System.out.println(imageSize);
@@ -96,7 +179,6 @@ public abstract class Game {
                 ImageView view = new ImageView(image);
                 btn.setGraphic(view);
             }
-
         });
     };
 
