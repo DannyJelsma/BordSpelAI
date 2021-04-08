@@ -130,7 +130,7 @@ public abstract class Game {
 
             char move = board.getPosition(position);
             double imageSize = btn.getPrefWidth() * 0.5;
-            System.out.println(imageSize);
+            //System.out.println(imageSize);
 
             // test random move
             // int randomNumber = new Random().nextInt(2);

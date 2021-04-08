@@ -56,6 +56,18 @@ public class Board {
         this.board = new char[size * size];
     }
 
+    public int getAmount(char player) {
+        int counter = 0;
+
+        for (char character : board) {
+            if (character == player) {
+                counter++;
+            }
+        }
+
+        return counter;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

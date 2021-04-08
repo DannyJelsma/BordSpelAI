@@ -62,7 +62,6 @@ public class Reversi extends Game {
         return availablePositions.get(ThreadLocalRandom.current().nextInt(0, availablePositions.size()));
     }
 
-
     private boolean isValidMove(int pos, char opponent) {
         //System.out.println("Pos = " + pos);
 

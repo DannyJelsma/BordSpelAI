@@ -41,7 +41,6 @@ public class GameController implements Controller, NetEventListener {
         // setup grid
         game.setupBoard(grid);
 
-        System.out.println(manager.getState());
         if (manager.getState().equals(GameState.YOUR_TURN)) {
             BordspelAI.getThreadPool().submit(() -> {
                 try {
@@ -88,11 +87,6 @@ public class GameController implements Controller, NetEventListener {
         }
 
         if (notification.getNotificationType().equals("YOURTURN")) {
-            try {
-                Thread.sleep(250);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             doBestMove();
         }
     }
