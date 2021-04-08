@@ -51,6 +51,13 @@ public class Reversi extends Game {
             }
         }
 
+        // Just in case
+        for (int pos : availablePositions) {
+            if (board.getPosition(pos) == ownChar || board.getPosition(pos) == opponentChar) {
+                availablePositions.remove(pos);
+            }
+        }
+
         return availablePositions;
     }
 
@@ -65,7 +72,8 @@ public class Reversi extends Game {
     private boolean isValidMove(int pos, char opponent) {
         //System.out.println("Pos = " + pos);
 
-        if (this.board.getPosition(pos) == NO_CHIP) {
+        if (this.board.getPosition(pos) != ownChar && this.board.getPosition(pos) != opponentChar) {
+            System.out.println(pos);
 
             /*
              *    |   |   |   |   |   |   |
@@ -86,6 +94,7 @@ public class Reversi extends Game {
              */
 
             for (Direction dir : Direction.values()) {
+                System.out.println(dir + ": " + checkChip(dir, pos));
                 if (checkChip(dir, pos) == opponent) {
                     return true;
                 }
