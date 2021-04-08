@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
@@ -50,6 +51,8 @@ public class LoginController implements Controller {
 
       alert.setHeaderText(null);
       alert.setContentText(server.getLastError());
+      Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+      stage.setAlwaysOnTop(true);
       alert.show();
     }
   }

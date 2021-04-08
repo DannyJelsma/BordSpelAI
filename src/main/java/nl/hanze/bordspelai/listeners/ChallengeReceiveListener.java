@@ -3,6 +3,7 @@ package nl.hanze.bordspelai.listeners;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
@@ -35,6 +36,8 @@ public class ChallengeReceiveListener implements NetEventListener {
                     alert.setHeaderText(null);
                     alert.setContentText(challenger + " has challenged you for a game of " + gameType + ". Do you want to accept the challenge?");
                     alert.getButtonTypes().setAll(yesButton, noButton);
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
                     Optional<ButtonType> buttonResult = alert.showAndWait();
 
                     if (buttonResult.isPresent()) {

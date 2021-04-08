@@ -2,6 +2,7 @@ package nl.hanze.bordspelai.listeners;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
+import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.controllers.LobbyController;
 import nl.hanze.bordspelai.enums.GameState;
@@ -20,6 +21,8 @@ public class WinLossListener implements NetEventListener {
         BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
             GameManager manager = GameManager.getInstance();
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+            stage.setAlwaysOnTop(true);
 
             // TODO: Stuur terug naar de lobby.
             switch (notification.getNotificationType()) {

@@ -2,10 +2,8 @@ package nl.hanze.bordspelai.controllers;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.Game;
@@ -69,6 +67,8 @@ public class LobbyController implements Controller {
                     alert.setTitle("Oops!");
                     alert.setHeaderText(null);
                     alert.setContentText("You can't challenge yourself...");
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
                     alert.show();
                 } else {
                     ButtonType reversiButton = new ButtonType("Othello/Reversi");
@@ -78,6 +78,9 @@ public class LobbyController implements Controller {
                     gameSelectAlert.setHeaderText(null);
                     gameSelectAlert.setContentText("What game do you want to play?");
                     gameSelectAlert.getButtonTypes().setAll(reversiButton, tttButton);
+                    gameSelectAlert.getDialogPane().getButtonTypes().add(new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE));
+                    Stage stage = (Stage) gameSelectAlert.getDialogPane().getScene().getWindow();
+                    stage.setAlwaysOnTop(true);
                     Optional<ButtonType> buttonResult = gameSelectAlert.showAndWait();
 
                     if (buttonResult.isPresent()) {
@@ -98,6 +101,8 @@ public class LobbyController implements Controller {
                             alert.setHeaderText(null);
                             alert.setContentText("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".");
                             alert.getButtonTypes().remove(1);
+                            Stage stage2 = (Stage) alert.getDialogPane().getScene().getWindow();
+                            stage2.setAlwaysOnTop(true);
                             alert.show();
                         } else {
                             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -106,6 +111,8 @@ public class LobbyController implements Controller {
                             alert.setHeaderText(null);
                             alert.setContentText(BordspelAI.getServer().getLastError());
                             alert.getButtonTypes().remove(1);
+                            Stage stage2 = (Stage) alert.getDialogPane().getScene().getWindow();
+                            stage2.setAlwaysOnTop(true);
                             alert.show();
                         }
                     }
