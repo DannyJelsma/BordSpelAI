@@ -42,14 +42,12 @@ public class GameController implements Controller, NetEventListener {
         game.setupBoard(grid);
 
         if (manager.getState().equals(GameState.YOUR_TURN)) {
-            BordspelAI.getThreadPool().submit(() -> {
-                try {
-                    Thread.sleep(250);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                doBestMove();
-            });
+            try {
+                Thread.sleep(250);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            doBestMove();
         }
 
         // for(int i = 0; i < board.length; i++) {

@@ -51,13 +51,6 @@ public class Reversi extends Game {
             }
         }
 
-        // Just in case
-        for (int pos : availablePositions) {
-            if (board.getPosition(pos) == ownChar || board.getPosition(pos) == opponentChar) {
-                availablePositions.remove(pos);
-            }
-        }
-
         return availablePositions;
     }
 
