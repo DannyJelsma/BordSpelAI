@@ -2,8 +2,8 @@ package nl.hanze.bordspelai.listeners;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
-import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
+import nl.hanze.bordspelai.builder.AlertBuilder;
 import nl.hanze.bordspelai.controllers.LobbyController;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
@@ -20,47 +20,36 @@ public class WinLossListener implements NetEventListener {
     public void update(Notification notification) {
         BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
             GameManager manager = GameManager.getInstance();
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-            stage.setAlwaysOnTop(true);
+            AlertBuilder builder = new AlertBuilder(Alert.AlertType.INFORMATION);
 
-            // TODO: Stuur terug naar de lobby.
             switch (notification.getNotificationType()) {
                 case "LOSS":
                     manager.setState(GameState.GAME_LOST);
-
-                    alert.setTitle("You lost the game...");
-                    alert.setHeaderText("You lost the game...");
-                    alert.setContentText(notification.getDataMap().get("COMMENT"));
-                    alert.showAndWait();
-                    reset();
+                    builder.setTitle("You lost the game...")
+                            .setHeader("You lost the game...")
+                            .setContent(notification.getDataMap().get("COMMENT"))
+                            .build().showAndWait();
                     break;
                 case "DRAW":
                     manager.setState(GameState.GAME_TIE);
-
-                    alert.setTitle("It's a draw.");
-                    alert.setHeaderText("It's a draw.");
-                    alert.setContentText(notification.getDataMap().get("COMMENT"));
-                    alert.showAndWait();
-                    reset();
+                    builder.setTitle("It's a draw.")
+                            .setHeader("It's a draw.")
+                            .setContent(notification.getDataMap().get("COMMENT"))
+                            .build().showAndWait();
                     break;
                 case "WIN":
                     manager.setState(GameState.GAME_WON);
-
-                    alert.setTitle("You won the game!");
-                    alert.setHeaderText("You won the game!");
-                    alert.setContentText(notification.getDataMap().get("COMMENT"));
-                    alert.showAndWait();
-                    reset();
+                    builder.setTitle("You won the game!")
+                            .setHeader("You won the game!")
+                            .setContent(notification.getDataMap().get("COMMENT"))
+                            .build().showAndWait();
                     break;
             }
+
+            NetEventManager.getInstance().unregister(GameManager.getInstance().getGameController());
+
+            View view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
+            SceneManager.switchScene(view);
         }));
-    }
-
-    private void reset() {
-        NetEventManager.getInstance().unregister(GameManager.getInstance().getGameController());
-
-        View view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
-        SceneManager.switchScene(view);
     }
 }

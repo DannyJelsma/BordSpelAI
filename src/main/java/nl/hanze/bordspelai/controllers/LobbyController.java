@@ -3,8 +3,8 @@ package nl.hanze.bordspelai.controllers;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
+import nl.hanze.bordspelai.builder.AlertBuilder;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.Game;
 import nl.hanze.bordspelai.enums.GameState;
@@ -62,25 +62,22 @@ public class LobbyController implements Controller {
         if (playerToChallenge != null) {
             BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
                 if (playerToChallenge.equalsIgnoreCase(manager.getUsername() + " (You)")) {
-                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    AlertBuilder builder = new AlertBuilder(Alert.AlertType.ERROR);
+                    Alert alert = builder.setTitle("Oops!")
+                            .setContent("You can't challenge yourself...")
+                            .build();
 
-                    alert.setTitle("Oops!");
-                    alert.setHeaderText(null);
-                    alert.setContentText("You can't challenge yourself...");
-                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                    stage.setAlwaysOnTop(true);
                     alert.show();
                 } else {
                     ButtonType reversiButton = new ButtonType("Othello/Reversi");
                     ButtonType tttButton = new ButtonType("Tic-tac-toe");
-                    Alert gameSelectAlert = new Alert(Alert.AlertType.NONE);
-                    gameSelectAlert.setTitle("Game selection");
-                    gameSelectAlert.setHeaderText(null);
-                    gameSelectAlert.setContentText("What game do you want to play?");
-                    gameSelectAlert.getButtonTypes().setAll(reversiButton, tttButton);
-                    gameSelectAlert.getDialogPane().getButtonTypes().add(new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE));
-                    Stage stage = (Stage) gameSelectAlert.getDialogPane().getScene().getWindow();
-                    stage.setAlwaysOnTop(true);
+                    ButtonType cancelButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    AlertBuilder builder = new AlertBuilder(Alert.AlertType.NONE);
+                    Alert gameSelectAlert = builder.setTitle("Game selection")
+                            .setContent("What game do you want to play?")
+                            .addButtons(reversiButton, tttButton, cancelButton)
+                            .build();
+
                     Optional<ButtonType> buttonResult = gameSelectAlert.showAndWait();
 
                     if (buttonResult.isPresent()) {
@@ -95,24 +92,20 @@ public class LobbyController implements Controller {
                         }
 
                         if (BordspelAI.getServer().sendCommand(Command.CHALLENGE, playerToChallenge, game.getGame())) {
-                            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                            Alert alert = new AlertBuilder(Alert.AlertType.CONFIRMATION)
+                                    .setTitle("Challenge sent")
+                                    .setContent("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".")
+                                    .build();
 
-                            alert.setTitle("Challenge sent");
-                            alert.setHeaderText(null);
-                            alert.setContentText("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".");
                             alert.getButtonTypes().remove(1);
-                            Stage stage2 = (Stage) alert.getDialogPane().getScene().getWindow();
-                            stage2.setAlwaysOnTop(true);
                             alert.show();
                         } else {
-                            Alert alert = new Alert(Alert.AlertType.ERROR);
+                            Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
+                                    .setTitle("Failed to send challenge")
+                                    .setContent(BordspelAI.getServer().getLastError())
+                                    .build();
 
-                            alert.setTitle("Failed to send challenge");
-                            alert.setHeaderText(null);
-                            alert.setContentText(BordspelAI.getServer().getLastError());
                             alert.getButtonTypes().remove(1);
-                            Stage stage2 = (Stage) alert.getDialogPane().getScene().getWindow();
-                            stage2.setAlwaysOnTop(true);
                             alert.show();
                         }
                     }

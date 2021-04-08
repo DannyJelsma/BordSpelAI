@@ -3,8 +3,8 @@ package nl.hanze.bordspelai.listeners;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
+import nl.hanze.bordspelai.builder.AlertBuilder;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
@@ -30,22 +30,21 @@ public class ChallengeReceiveListener implements NetEventListener {
 
                     ButtonType yesButton = new ButtonType("Yes");
                     ButtonType noButton = new ButtonType("No");
+                    Alert alert = new AlertBuilder(Alert.AlertType.INFORMATION)
+                            .setTitle("Challenge received.")
+                            .setContent(challenger + " has challenged you for a game of " + gameType + ". Do you want to accept the challenge?")
+                            .addButtons(yesButton, noButton)
+                            .build();
 
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Challenge received.");
-                    alert.setHeaderText(null);
-                    alert.setContentText(challenger + " has challenged you for a game of " + gameType + ". Do you want to accept the challenge?");
-                    alert.getButtonTypes().setAll(yesButton, noButton);
-                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-                    stage.setAlwaysOnTop(true);
                     Optional<ButtonType> buttonResult = alert.showAndWait();
 
                     if (buttonResult.isPresent()) {
                         if (buttonResult.get().equals(yesButton)) {
                             if (!BordspelAI.getServer().sendCommand(Command.CHALLENGE_ACCEPT, challengeNumber)) {
-                                Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+                                Alert errorAlert = new AlertBuilder(Alert.AlertType.ERROR)
+                                        .setContent(BordspelAI.getServer().getLastError())
+                                        .build();
 
-                                errorAlert.setContentText(BordspelAI.getServer().getLastError());
                                 errorAlert.show();
                             }
                         }

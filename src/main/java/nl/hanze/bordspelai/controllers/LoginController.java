@@ -5,8 +5,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import nl.hanze.bordspelai.BordspelAI;
+import nl.hanze.bordspelai.builder.AlertBuilder;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.enums.Mode;
@@ -47,12 +47,11 @@ public class LoginController implements Controller {
       LobbyView view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
       SceneManager.switchScene(view);
     } else {
-      Alert alert = new Alert(Alert.AlertType.ERROR);
+      Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
+              .setTitle("Error!")
+              .setContent(server.getLastError())
+              .build();
 
-      alert.setHeaderText(null);
-      alert.setContentText(server.getLastError());
-      Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-      stage.setAlwaysOnTop(true);
       alert.show();
     }
   }
