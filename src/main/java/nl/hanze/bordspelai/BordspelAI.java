@@ -60,8 +60,6 @@ public class BordspelAI extends Application {
             System.exit(0);
         });
 
-        // View view = new ReversiView(new GameController(new TicTacToe("shutup")));
-        //View view = new ReversiView(new GameController(new Reversi()));
         SceneManager.switchScene(view);
     }
 }

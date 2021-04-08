@@ -43,12 +43,14 @@ public class GameController implements Controller, NetEventListener {
 
         System.out.println(manager.getState());
         if (manager.getState().equals(GameState.YOUR_TURN)) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            doBestMove();
+            BordspelAI.getThreadPool().submit(() -> {
+                try {
+                    Thread.sleep(250);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                doBestMove();
+            });
         }
 
         // for(int i = 0; i < board.length; i++) {
@@ -87,7 +89,7 @@ public class GameController implements Controller, NetEventListener {
 
         if (notification.getNotificationType().equals("YOURTURN")) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(250);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

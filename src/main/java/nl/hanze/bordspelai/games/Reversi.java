@@ -13,9 +13,7 @@ public class Reversi extends Game {
 
     private final char ownChar;
     private final char opponentChar;
-
     private final GameManager manager = GameManager.getInstance();
-
     private final String startingPlayer;
 
     public Reversi(String startingPlayer) {
@@ -25,11 +23,11 @@ public class Reversi extends Game {
 
         // set players char
         if (startingPlayer.equals(manager.getUsername())) {
-            this.ownChar = 'x';
-            this.opponentChar = 'o';
-        } else {
             this.ownChar = 'o';
             this.opponentChar = 'x';
+        } else {
+            this.ownChar = 'x';
+            this.opponentChar = 'o';
         }
     }
 
@@ -37,9 +35,9 @@ public class Reversi extends Game {
     public ArrayList<Integer> getAvailablePositions(Board board) {
         ArrayList<Integer> availablePositions = new ArrayList<>();
         for (int pos = 0; pos < this.getBoard().length; pos++) {
-            if (this.isValidMove(pos)) {
+            if (this.isValidMove(pos, opponentChar)) {
                 for (Direction dir : Direction.values()) {
-                    List<Integer> flippedChips = getFlippedChips(dir, pos);
+                    List<Integer> flippedChips = getFlippedChips(dir, pos, ownChar, opponentChar);
 
                     if (flippedChips != null) {
                         int flipAmount = flippedChips.size();
@@ -59,15 +57,13 @@ public class Reversi extends Game {
     @Override
     public int doBestMove() {
         ArrayList<Integer> availablePositions = getAvailablePositions(board);
-        System.out.println(availablePositions);
+        System.out.println("Available pos: " + availablePositions);
 
         return availablePositions.get(ThreadLocalRandom.current().nextInt(0, availablePositions.size()));
     }
 
 
-    private boolean isValidMove(int pos) {
-        boolean result = false;
-
+    private boolean isValidMove(int pos, char opponent) {
         //System.out.println("Pos = " + pos);
 
         if (this.board.getPosition(pos) == NO_CHIP) {
@@ -90,26 +86,16 @@ public class Reversi extends Game {
              *    |   |   |   |   |   |   |
              */
 
-            if (checkChip(Direction.TOP, pos) == this.opponentChar) {
-                result = true;
-            } else if (checkChip(Direction.TOP_RIGHT, pos) == this.opponentChar) {
-                result = true;
-            } else if (checkChip(Direction.RIGHT, pos) == this.opponentChar) {
-                result = true;
-            } else if (checkChip(Direction.BOTTOM_RIGHT, pos) == this.opponentChar) {
-                result = true;
-            } else if (checkChip(Direction.BOTTOM, pos) == this.opponentChar) {
-                result = true;
-            } else if (checkChip(Direction.BOTTOM_LEFT, pos) == this.opponentChar) {
-                result = true;
-            } else if (checkChip(Direction.LEFT, pos) == this.opponentChar) {
-                result = true;
-            } else if (checkChip(Direction.TOP_LEFT, pos) == this.opponentChar) {
-                result = true;
+            for (Direction dir : Direction.values()) {
+                if (checkChip(dir, pos) == opponent) {
+                    return true;
+                }
             }
+
+            return false;
         }
 
-        return result;
+        return false;
     }
 
     @Override
@@ -118,7 +104,12 @@ public class Reversi extends Game {
         updateMove(position);
 
         for (Direction dir : Direction.values()) {
-            List<Integer> flipped = getFlippedChips(dir, position);
+            List<Integer> flipped;
+            if (charToMove == ownChar) {
+                flipped = getFlippedChips(dir, position, ownChar, opponentChar);
+            } else {
+                flipped = getFlippedChips(dir, position, opponentChar, ownChar);
+            }
 
             if (flipped != null) {
                 for (int pos : flipped) {
@@ -128,11 +119,11 @@ public class Reversi extends Game {
             }
         }
 
-        System.out.println(Arrays.toString(board.getBoard()));
+        System.out.println("Board: " + Arrays.toString(board.getBoard()));
     }
 
-    public List<Integer> getFlippedChips(Direction direction, int pos) {
-        if (checkChip(direction, pos) != this.ownChar) {
+    public List<Integer> getFlippedChips(Direction direction, int pos, char movingPlayer, char playerToFlip) {
+        if (checkChip(direction, pos) != playerToFlip) {
             return null;
         }
 
@@ -144,20 +135,21 @@ public class Reversi extends Game {
         List<Integer> toFlip = new ArrayList<>();
         while (newPos > -1) {
             newPos = getChipPosition(direction, newPos);
+
+            if (newPos == -1) {
+                return null;
+            }
+
             char chipChar = board.getPosition(newPos);
 
             toFlip.add(newPos);
 
-            if (chipChar != this.ownChar) {
-                if (chipChar == this.opponentChar) {
+            if (chipChar != playerToFlip) {
+                if (chipChar == movingPlayer) {
                     return toFlip;
                 } else {
                     return null;
                 }
-            }
-
-            if (newPos == -1) {
-                break;
             }
         }
 
