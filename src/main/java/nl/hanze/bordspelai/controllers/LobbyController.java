@@ -49,7 +49,6 @@ public class LobbyController implements Controller {
     @FXML
     public void refresh() {
         Server server = BordspelAI.getServer();
-
         server.sendCommand(Command.GET_PLAYERLIST);
         BordspelAI.getThreadPool().submit(() -> Platform.runLater(this::updatePlayerList));
     }

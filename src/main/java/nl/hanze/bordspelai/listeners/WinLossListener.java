@@ -44,6 +44,8 @@ public class WinLossListener implements NetEventListener {
                             .setContent(notification.getDataMap().get("COMMENT"))
                             .build().showAndWait();
                     break;
+                default:
+                    return;
             }
 
             NetEventManager.getInstance().unregister(GameManager.getInstance().getGameController());

@@ -1,6 +1,7 @@
 package nl.hanze.bordspelai;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import nl.hanze.bordspelai.controllers.LoginController;
 import nl.hanze.bordspelai.events.NetEventManager;
@@ -28,7 +29,6 @@ public class BordspelAI extends Application {
         if (!server.connect()) {
             throw new IllegalStateException("Could not connect to the server.");
         }
-
         getThreadPool().submit(() -> Application.launch(args));
         //Application.launch(args);
 
@@ -55,6 +55,10 @@ public class BordspelAI extends Application {
     public void start(Stage stage) {
         View view = new LoginView("/views/login.fxml", new LoginController());
         SceneManager.setStage(stage);
+        stage.setOnCloseRequest(t -> {
+            Platform.exit();
+            System.exit(0);
+        });
 
         // View view = new ReversiView(new GameController(new TicTacToe("shutup")));
         //View view = new ReversiView(new GameController(new Reversi()));
