@@ -22,7 +22,7 @@ public class ChallengeReceiveListener implements NetEventListener {
 
         if (manager.getState().equals(GameState.LOBBY) && notification.getNotificationType().equals("CHALLENGE")) {
             if (notification.isMap()) {
-                BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
+                Platform.runLater(() -> {
                     Map<String, String> data = notification.getDataMap();
                     String challenger = data.get("CHALLENGER");
                     String challengeNumber = data.get("CHALLENGENUMBER");
@@ -40,16 +40,15 @@ public class ChallengeReceiveListener implements NetEventListener {
 
                     if (buttonResult.isPresent()) {
                         if (buttonResult.get().equals(yesButton)) {
-                            if (!BordspelAI.getServer().sendCommand(Command.CHALLENGE_ACCEPT, challengeNumber)) {
-                                Alert errorAlert = new AlertBuilder(Alert.AlertType.ERROR)
-                                        .setContent(BordspelAI.getServer().getLastError())
-                                        .build();
+                            BordspelAI.getServer().sendCommand(Command.CHALLENGE_ACCEPT, challengeNumber);
+                       /* Alert errorAlert = new AlertBuilder(Alert.AlertType.ERROR)
+                                .setContent(BordspelAI.getServer().getLastError())
+                                .build();
 
-                                errorAlert.show();
-                            }
+                        errorAlert.show();*/
                         }
                     }
-                }));
+                });
             }
         }
     }

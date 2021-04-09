@@ -5,7 +5,6 @@ import nl.hanze.bordspelai.managers.GameManager;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Reversi extends Game {
 
@@ -34,19 +33,17 @@ public class Reversi extends Game {
     @Override
     public ArrayList<Integer> getAvailablePositions(Board board, char playerToCheck) {
         ArrayList<Integer> availablePositions = new ArrayList<>();
-        for (int pos = 0; pos < getBoard().getBoard().length; pos++) {
+        for (int pos = 0; pos < board.getBoard().length; pos++) {
             char otherChar = playerToCheck == ownChar ? opponentChar : ownChar;
-            if (this.isValidMove(pos, otherChar)) {
-                for (Direction dir : Direction.values()) {
-                    List<Integer> flippedChips = getFlippedChips(dir, pos, playerToCheck, otherChar);
+            if (this.isValidMove(board, pos, playerToCheck)) {
+                List<Integer> flippedChips = getAllFlippedChips(board, pos, playerToCheck, otherChar);
 
-                    if (flippedChips != null) {
-                        int flipAmount = flippedChips.size();
+                if (flippedChips != null) {
+                    int flipAmount = flippedChips.size();
 
-                        if (flipAmount > 0) {
-                            availablePositions.add(pos);
-                            break;
-                        }
+                    if (flipAmount > 0) {
+                        availablePositions.add(pos);
+                        break;
                     }
                 }
             }
@@ -55,16 +52,36 @@ public class Reversi extends Game {
         return availablePositions;
     }
 
+    public List<Integer> getAllFlippedChips(Board board, int pos, char playerToCheck, char otherChar) {
+        List<Integer> toFlip = new ArrayList<>();
+        for (Direction dir : Direction.values()) {
+            List<Integer> flippedChips = getFlippedChips(board, dir, pos, playerToCheck, otherChar);
+
+            if (flippedChips != null) {
+                toFlip.addAll(flippedChips);
+            }
+        }
+
+        return toFlip;
+    }
+
     @Override
     public int doBestMove() {
         int highestScore = Integer.MIN_VALUE;
         int bestMove = 0;
 
+        System.out.println("Available: " + getAvailablePositions(getBoard(), getCharByUsername(manager.getUsername())));
+
         for (int move : getAvailablePositions(getBoard(), getCharByUsername(manager.getUsername()))) {
             Board newBoard = getBoard().clone();
-            newBoard.setPosition(move, getCharByUsername(manager.getUsername()));
-            int score = minimax(newBoard, 0, false);
+            List<Integer> flippedChips = getAllFlippedChips(getBoard(), move, ownChar, opponentChar);
+            newBoard.setPosition(move, ownChar);
 
+            for (int chip : flippedChips) {
+                newBoard.setPosition(chip, ownChar);
+            }
+
+            int score = minimax(newBoard, 0, false);
             if (score > highestScore) {
                 highestScore = score;
                 bestMove = move;
@@ -73,10 +90,11 @@ public class Reversi extends Game {
         return bestMove;
     }
     private int minimax(Board board, int depth, boolean maximize) {
-        char winner = getWinner();
+        char winner = getWinner(board);
         char ourChar = getCharByUsername(manager.getUsername());
         char opponentChar = getCharByUsername(manager.getOpponent());
-        if(hasGameEnded()){
+
+        if (hasGameEnded(board)) {
             if (winner == ourChar) {
                 return 10;
             } else if (winner == opponentChar) {
@@ -88,20 +106,35 @@ public class Reversi extends Game {
 
         if (maximize) {
             int bestScore = Integer.MIN_VALUE;
-            
-            for (int move :  getAvailablePositions(board, getCharByUsername(manager.getUsername()))) {
+
+            for (int move : getAvailablePositions(board, ourChar)) {
                 Board newBoard = board.clone();
+                List<Integer> flippedChips = getAllFlippedChips(board, move, ourChar, opponentChar);
                 newBoard.setPosition(move, ourChar);
+
+                for (int chip : flippedChips) {
+                    newBoard.setPosition(chip, ourChar);
+                }
+
+                System.out.println(Arrays.toString(board.getBoard()) + " -> " + Arrays.toString(newBoard.getBoard()));
+
                 int score = minimax(newBoard, depth + 1, false);
                 bestScore = Math.max(score, bestScore);
             }
+
             return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
 
-            for (int move : getAvailablePositions(board, getCharByUsername(manager.getUsername()))) {
+            for (int move : getAvailablePositions(board, getCharByUsername(manager.getOpponent()))) {
                 Board newBoard = board.clone();
+                List<Integer> flippedChips = getAllFlippedChips(board, move, opponentChar, ourChar);
                 newBoard.setPosition(move, opponentChar);
+
+                for (int chip : flippedChips) {
+                    newBoard.setPosition(chip, opponentChar);
+                }
+
                 int score = minimax(newBoard, depth + 1, true);
                 bestScore = Math.min(score, bestScore);
             }
@@ -109,10 +142,10 @@ public class Reversi extends Game {
         }
     }
 
-    private boolean isValidMove(int pos, char opponent) {
+    private boolean isValidMove(Board board, int pos, char opponent) {
         //System.out.println("Pos = " + pos);
 
-        if (getBoard().getPosition(pos) != ownChar && getBoard().getPosition(pos) != opponentChar) {
+        if (board.getPosition(pos) == NO_CHIP) {
             //System.out.println(pos);
 
             /*
@@ -135,7 +168,7 @@ public class Reversi extends Game {
 
             for (Direction dir : Direction.values()) {
                 //System.out.println(dir + ": " + checkChip(dir, pos));
-                if (checkChip(dir, pos) == opponent) {
+                if (checkChip(board, dir, pos) == opponent) {
                     return true;
                 }
             }
@@ -146,19 +179,19 @@ public class Reversi extends Game {
         return false;
     }
 
-    public boolean hasGameEnded() {
-        return getAvailablePositions(getBoard(), ownChar).size() == 0 && getAvailablePositions(getBoard(), opponentChar).size() == 0;
+    public boolean hasGameEnded(Board board) {
+        return getAvailablePositions(board, ownChar).size() == 0 && getAvailablePositions(board, opponentChar).size() == 0;
     }
 
     // Returns 0 when game hasn't ended.
     // Returns 1 when draw.
-    public char getWinner() {
-        if (!hasGameEnded()) {
+    public char getWinner(Board board) {
+        if (!hasGameEnded(board)) {
             return 0;
         }
 
-        int ownChips = getBoard().getAmount(ownChar);
-        int opponentChips = getBoard().getAmount(opponentChar);
+        int ownChips = board.getAmount(ownChar);
+        int opponentChips = board.getAmount(opponentChar);
 
         if (ownChips > opponentChips) {
             return ownChar;
@@ -174,9 +207,9 @@ public class Reversi extends Game {
         for (Direction dir : Direction.values()) {
             List<Integer> flipped;
             if (charToMove == ownChar) {
-                flipped = getFlippedChips(dir, position, ownChar, opponentChar);
+                flipped = getFlippedChips(getBoard(), dir, position, ownChar, opponentChar);
             } else {
-                flipped = getFlippedChips(dir, position, opponentChar, ownChar);
+                flipped = getFlippedChips(getBoard(), dir, position, opponentChar, ownChar);
             }
 
             getBoard().setPosition(position, charToMove);
@@ -194,7 +227,7 @@ public class Reversi extends Game {
         System.out.println("Board: " + Arrays.toString(getBoard().getBoard()));
     }
 
-    public List<Integer> getFlippedChips(Direction direction, int pos, char movingPlayer, char playerToFlip) {
+    public List<Integer> getFlippedChips(Board board, Direction direction, int pos, char movingPlayer, char playerToFlip) {
         boolean foundPlayerToFlip = false;
 
         if (pos < 0 || pos > 63) {
@@ -210,7 +243,7 @@ public class Reversi extends Game {
                 return null;
             }
 
-            char chipChar = getBoard().getPosition(newPos);
+            char chipChar = board.getPosition(newPos);
 
             if (chipChar != playerToFlip) {
                 if (chipChar == movingPlayer && foundPlayerToFlip) {
@@ -231,14 +264,14 @@ public class Reversi extends Game {
         TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT, TOP_LEFT
     }
 
-    private char checkChip(Direction direction, int pos) {
+    private char checkChip(Board board, Direction direction, int pos) {
         int chipPos = getChipPosition(direction, pos);
 
         if (chipPos == -1) {
             return 0;
         }
 
-        return getBoard().getPosition(chipPos);
+        return board.getPosition(chipPos);
     }
 
     private int getChipPosition(Direction direction, int pos) {

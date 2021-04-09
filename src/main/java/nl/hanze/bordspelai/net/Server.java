@@ -1,9 +1,9 @@
 package nl.hanze.bordspelai.net;
 
 import nl.hanze.bordspelai.enums.Command;
-import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.notifications.GameNotification;
 import nl.hanze.bordspelai.notifications.Notification;
+import nl.hanze.bordspelai.notifications.ResultNotification;
 import nl.hanze.bordspelai.notifications.ServerNotification;
 
 import java.io.BufferedReader;
@@ -18,8 +18,6 @@ public class Server {
     private final int port;
     private PrintWriter out;
     private BufferedReader in;
-    private boolean waitingForCommand = false;
-    private String lastError;
 
     public Server(String ip, int port) {
         this.ip = ip;
@@ -46,68 +44,28 @@ public class Server {
         }
     }
 
-    public String getLastError() {
-        return lastError;
-    }
+    public void sendCommand(Command command, String... params) {
+        StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
 
-    public boolean sendCommand(Command command, String... params) {
-        try {
-            waitingForCommand = true;
-            StringBuilder commandBuilder = new StringBuilder(command.getCommand() + " ");
-
-            if (params != null) {
-                for (String param : params) {
-                    if (params.length > 1) {
-                        commandBuilder.append("\"");
-                    }
-
-                    commandBuilder.append(param);
-
-                    if (params.length > 1) {
-                        commandBuilder.append("\"");
-                    }
-
-                    commandBuilder.append(" ");
+        if (params != null) {
+            for (String param : params) {
+                if (params.length > 1) {
+                    commandBuilder.append("\"");
                 }
-            }
 
-            String commandString = commandBuilder.toString().trim();
-            System.out.println("> " + commandString);
-            out.println(commandString);
-            String reply = in.readLine();
-            System.out.println("< " + reply);
+                commandBuilder.append(param);
 
-            if (reply.equals("OK")) {
-                return true;
-            } else if (reply.startsWith("ERR")) {
-                lastError = reply.split(" ", 2)[1];
-                return false;
-            } else {
-                NetEventManager eventManager = NetEventManager.getInstance();
-
-                if (reply.startsWith("SVR GAME")) {
-                    eventManager.notify(new GameNotification(reply));
-                } else if (reply.startsWith("SVR")) {
-                    eventManager.notify(new ServerNotification(reply));
+                if (params.length > 1) {
+                    commandBuilder.append("\"");
                 }
+
+                commandBuilder.append(" ");
             }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        } finally {
-            waitingForCommand = false;
         }
 
-        return false;
-    }
-
-    public boolean isReaderReady() {
-        try {
-            return in.ready() && !waitingForCommand;
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-
-        return false;
+        String commandString = commandBuilder.toString().trim();
+        System.out.println("> " + commandString);
+        out.println(commandString);
     }
 
     public Notification waitForNotifications() {
@@ -117,6 +75,8 @@ public class Server {
             return new GameNotification(message);
         } else if (message.startsWith("SVR")) {
             return new ServerNotification(message);
+        } else if (message.startsWith("OK") || message.startsWith("ERR")) {
+            return new ResultNotification(message);
         }
 
         return null;

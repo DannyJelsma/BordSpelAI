@@ -12,10 +12,7 @@ import nl.hanze.bordspelai.notifications.Notification;
 import nl.hanze.bordspelai.views.LoginView;
 import nl.hanze.bordspelai.views.View;
 
-import java.util.concurrent.ForkJoinPool;
-
 public class BordspelAI extends Application {
-    private static final ForkJoinPool pool = ForkJoinPool.commonPool();
     private static final Server server = new Server("145.33.225.170", 7789);
 
     public static void main(String[] args) {
@@ -25,30 +22,25 @@ public class BordspelAI extends Application {
         netEventMgr.register(new PlayerListUpdateListener(SceneManager.getLobbyModel()));
         netEventMgr.register(new WinLossListener());
         netEventMgr.register(new MatchStartListener());
+        netEventMgr.register(new ErrorListener());
 
         if (!server.connect()) {
             throw new IllegalStateException("Could not connect to the server.");
         }
-        getThreadPool().submit(() -> Application.launch(args));
-        //Application.launch(args);
 
-        // Moet als laatste runnen!
-        //noinspection InfiniteLoopStatement
-        while (true) {
-            if (getServer().isReaderReady()) {
+        new Thread(() -> {
+            while (true) {
                 Notification notification = server.waitForNotifications();
 
                 netEventMgr.notify(notification);
             }
-        }
+        }).start();
+
+        Application.launch(args);
     }
 
     public static Server getServer() {
         return server;
-    }
-
-    public static ForkJoinPool getThreadPool() {
-        return pool;
     }
 
     @Override

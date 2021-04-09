@@ -2,11 +2,9 @@ package nl.hanze.bordspelai.controllers;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import nl.hanze.bordspelai.BordspelAI;
-import nl.hanze.bordspelai.builder.AlertBuilder;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.enums.Mode;
@@ -35,24 +33,23 @@ public class LoginController implements Controller {
 
   @FXML
   private void login() {
-    Server server = BordspelAI.getServer();
-    GameManager manager = GameManager.getInstance();
-    Mode selectedMode = Mode.valueOf(mode.getSelectionModel().getSelectedItem().toUpperCase());
-    System.out.println("Username: " + username.getText());
+      Server server = BordspelAI.getServer();
+      GameManager manager = GameManager.getInstance();
+      Mode selectedMode = Mode.valueOf(mode.getSelectionModel().getSelectedItem().toUpperCase());
+      System.out.println("Username: " + username.getText());
 
-    manager.setMode(selectedMode);
-    if (server.sendCommand(Command.LOGIN, username.getText())) {
+      manager.setMode(selectedMode);
+      server.sendCommand(Command.LOGIN, username.getText());
       manager.setState(GameState.LOBBY);
       manager.setUsername(username.getText());
       LobbyView view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
       SceneManager.switchScene(view);
-    } else {
-      Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
-              .setTitle("Error!")
-              .setContent(server.getLastError())
-              .build();
+/*  } else {
+    Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
+            .setTitle("Error!")
+            .setContent(server.getLastError())
+            .build();
 
-      alert.show();
-    }
+    alert.show();*/
   }
 }

@@ -43,14 +43,14 @@ public class LobbyController implements Controller {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        BordspelAI.getThreadPool().submit(() -> Platform.runLater(this::updatePlayerList));
+        new Thread(() -> Platform.runLater(this::updatePlayerList)).start();
     }
 
     @FXML
     public void refresh() {
         Server server = BordspelAI.getServer();
         server.sendCommand(Command.GET_PLAYERLIST);
-        BordspelAI.getThreadPool().submit(() -> Platform.runLater(this::updatePlayerList));
+        new Thread(() -> Platform.runLater(this::updatePlayerList)).start();
     }
 
     @FXML
@@ -59,7 +59,7 @@ public class LobbyController implements Controller {
         String playerToChallenge = playerList.getSelectionModel().getSelectedItem();
 
         if (playerToChallenge != null) {
-            BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
+            Platform.runLater(() -> {
                 if (playerToChallenge.equalsIgnoreCase(manager.getUsername() + " (You)")) {
                     AlertBuilder builder = new AlertBuilder(Alert.AlertType.ERROR);
                     Alert alert = builder.setTitle("Oops!")
@@ -90,26 +90,25 @@ public class LobbyController implements Controller {
                             return;
                         }
 
-                        if (BordspelAI.getServer().sendCommand(Command.CHALLENGE, playerToChallenge, game.getGame())) {
-                            Alert alert = new AlertBuilder(Alert.AlertType.CONFIRMATION)
-                                    .setTitle("Challenge sent")
-                                    .setContent("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".")
-                                    .build();
+                        BordspelAI.getServer().sendCommand(Command.CHALLENGE, playerToChallenge, game.getGame());
+                        Alert alert = new AlertBuilder(Alert.AlertType.CONFIRMATION)
+                                .setTitle("Challenge sent")
+                                .setContent("A challenge to play " + game.getGame() + " has been sent to " + playerToChallenge + ".")
+                                .build();
 
-                            alert.getButtonTypes().remove(1);
-                            alert.show();
-                        } else {
-                            Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
-                                    .setTitle("Failed to send challenge")
-                                    .setContent(BordspelAI.getServer().getLastError())
-                                    .build();
+                        alert.getButtonTypes().remove(1);
+                        alert.show();
+                    } else {
+/*                            Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
+                                .setTitle("Failed to send challenge")
+                                .setContent(BordspelAI.getServer().getLastError())
+                                .build();
 
-                            alert.getButtonTypes().remove(1);
-                            alert.show();
-                        }
+                        alert.getButtonTypes().remove(1);
+                        alert.show();*/
                     }
                 }
-            }));
+            });
         }
     }
 

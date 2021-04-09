@@ -1,7 +1,6 @@
 package nl.hanze.bordspelai.listeners;
 
 import javafx.application.Platform;
-import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.controllers.GameController;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
@@ -23,7 +22,7 @@ public class MatchStartListener implements NetEventListener {
     @Override
     public void update(Notification notification) {
         if (notification.getNotificationType().equals("MATCH")) {
-            BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
+            Platform.runLater(() -> {
                 Map<String, String> dataMap = notification.getDataMap();
                 String gameType = dataMap.get("GAMETYPE");
 
@@ -57,13 +56,13 @@ public class MatchStartListener implements NetEventListener {
                     gameController = new GameController(game);
                     view = new ReversiView(gameController);
                 }
-                
+
                 if (game != null) {
                     NetEventManager.getInstance().register(gameController);
                     manager.setGameController(gameController);
                     SceneManager.switchScene(view);
                 }
-            }));
+            });
         }
     }
 }

@@ -2,7 +2,6 @@ package nl.hanze.bordspelai.listeners;
 
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
-import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.builder.AlertBuilder;
 import nl.hanze.bordspelai.controllers.LobbyController;
 import nl.hanze.bordspelai.enums.GameState;
@@ -18,7 +17,7 @@ public class WinLossListener implements NetEventListener {
 
     @Override
     public void update(Notification notification) {
-        BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
+        Platform.runLater(() -> {
             GameManager manager = GameManager.getInstance();
             AlertBuilder builder = new AlertBuilder(Alert.AlertType.INFORMATION);
 
@@ -52,6 +51,6 @@ public class WinLossListener implements NetEventListener {
 
             View view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
             SceneManager.switchScene(view);
-        }));
+        });
     }
 }

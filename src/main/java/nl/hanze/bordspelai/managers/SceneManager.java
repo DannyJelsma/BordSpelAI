@@ -4,7 +4,6 @@ import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.models.LobbyModel;
 import nl.hanze.bordspelai.views.View;
 
@@ -20,7 +19,7 @@ public class SceneManager {
   }
 
   public static void switchScene(View view) {
-    BordspelAI.getThreadPool().submit(() -> Platform.runLater(() -> {
+    Platform.runLater(() -> {
       try {
         Parent root = view.getLoader().load();
         Scene scene = new Scene(root);
@@ -39,7 +38,7 @@ public class SceneManager {
       } catch (IOException e) {
         e.printStackTrace();
       }
-    }));
+    });
   }
 
   public static LobbyModel getLobbyModel() {
