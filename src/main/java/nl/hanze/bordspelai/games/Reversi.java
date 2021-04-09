@@ -32,12 +32,13 @@ public class Reversi extends Game {
     }
 
     @Override
-    public ArrayList<Integer> getAvailablePositions(Board board) {
+    public ArrayList<Integer> getAvailablePositions(Board board, char playerToCheck) {
         ArrayList<Integer> availablePositions = new ArrayList<>();
         for (int pos = 0; pos < getBoard().getBoard().length; pos++) {
-            if (this.isValidMove(pos, opponentChar)) {
+            char otherChar = playerToCheck == ownChar ? opponentChar : ownChar;
+            if (this.isValidMove(pos, otherChar)) {
                 for (Direction dir : Direction.values()) {
-                    List<Integer> flippedChips = getFlippedChips(dir, pos, ownChar, opponentChar);
+                    List<Integer> flippedChips = getFlippedChips(dir, pos, playerToCheck, otherChar);
 
                     if (flippedChips != null) {
                         int flipAmount = flippedChips.size();
@@ -56,7 +57,7 @@ public class Reversi extends Game {
 
     @Override
     public int doBestMove() {
-        ArrayList<Integer> availablePositions = getAvailablePositions(getBoard());
+        ArrayList<Integer> availablePositions = getAvailablePositions(getBoard(), ownChar);
         System.out.println("Available pos: " + availablePositions);
 
         return availablePositions.get(ThreadLocalRandom.current().nextInt(0, availablePositions.size()));
@@ -97,6 +98,25 @@ public class Reversi extends Game {
         }
 
         return false;
+    }
+
+    public boolean hasGameEnded() {
+        return getAvailablePositions(getBoard(), ownChar).size() == 0 && getAvailablePositions(getBoard(), opponentChar).size() == 0;
+    }
+
+    public char getWinner() {
+        if (!hasGameEnded()) {
+            return 0;
+        }
+
+        int ownChips = getBoard().getAmount(ownChar);
+        int opponentChips = getBoard().getAmount(opponentChar);
+
+        if (ownChips > opponentChips) {
+            return ownChar;
+        } else {
+            return opponentChar;
+        }
     }
 
     @Override

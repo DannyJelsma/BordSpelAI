@@ -121,7 +121,7 @@ public abstract class Game {
         addMove(position, getCharByUsername(manager.getCurrentPlayer()));
     }
 
-    protected abstract ArrayList<Integer> getAvailablePositions(Board board);
+    protected abstract ArrayList<Integer> getAvailablePositions(Board board, char playerToCheck);
 
     public void updateMove(int position) {
         Platform.runLater(() -> {
