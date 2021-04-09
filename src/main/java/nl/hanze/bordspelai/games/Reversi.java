@@ -34,7 +34,7 @@ public class Reversi extends Game {
     @Override
     public ArrayList<Integer> getAvailablePositions(Board board) {
         ArrayList<Integer> availablePositions = new ArrayList<>();
-        for (int pos = 0; pos < this.getBoard().length; pos++) {
+        for (int pos = 0; pos < getBoard().getBoard().length; pos++) {
             if (this.isValidMove(pos, opponentChar)) {
                 for (Direction dir : Direction.values()) {
                     List<Integer> flippedChips = getFlippedChips(dir, pos, ownChar, opponentChar);
@@ -56,7 +56,7 @@ public class Reversi extends Game {
 
     @Override
     public int doBestMove() {
-        ArrayList<Integer> availablePositions = getAvailablePositions(board);
+        ArrayList<Integer> availablePositions = getAvailablePositions(getBoard());
         System.out.println("Available pos: " + availablePositions);
 
         return availablePositions.get(ThreadLocalRandom.current().nextInt(0, availablePositions.size()));
@@ -65,8 +65,8 @@ public class Reversi extends Game {
     private boolean isValidMove(int pos, char opponent) {
         //System.out.println("Pos = " + pos);
 
-        if (this.board.getPosition(pos) != ownChar && this.board.getPosition(pos) != opponentChar) {
-            System.out.println(pos);
+        if (getBoard().getPosition(pos) != ownChar && getBoard().getPosition(pos) != opponentChar) {
+            //System.out.println(pos);
 
             /*
              *    |   |   |   |   |   |   |
@@ -87,7 +87,7 @@ public class Reversi extends Game {
              */
 
             for (Direction dir : Direction.values()) {
-                System.out.println(dir + ": " + checkChip(dir, pos));
+                //System.out.println(dir + ": " + checkChip(dir, pos));
                 if (checkChip(dir, pos) == opponent) {
                     return true;
                 }
@@ -101,9 +101,6 @@ public class Reversi extends Game {
 
     @Override
     public void addMove(int position, char charToMove) {
-        board.setPosition(position, charToMove);
-        updateMove(position);
-
         for (Direction dir : Direction.values()) {
             List<Integer> flipped;
             if (charToMove == ownChar) {
@@ -112,21 +109,23 @@ public class Reversi extends Game {
                 flipped = getFlippedChips(dir, position, opponentChar, ownChar);
             }
 
+            getBoard().setPosition(position, charToMove);
+            updateMove(position);
+
             if (flipped != null) {
+                System.out.println("Flipped: " + flipped);
                 for (int pos : flipped) {
-                    board.setPosition(pos, charToMove);
+                    getBoard().setPosition(pos, charToMove);
                     updateMove(pos);
                 }
             }
         }
 
-        System.out.println("Board: " + Arrays.toString(board.getBoard()));
+        System.out.println("Board: " + Arrays.toString(getBoard().getBoard()));
     }
 
     public List<Integer> getFlippedChips(Direction direction, int pos, char movingPlayer, char playerToFlip) {
-        if (checkChip(direction, pos) != playerToFlip) {
-            return null;
-        }
+        boolean foundPlayerToFlip = false;
 
         if (pos < 0 || pos > 63) {
             return null;
@@ -141,20 +140,21 @@ public class Reversi extends Game {
                 return null;
             }
 
-            char chipChar = board.getPosition(newPos);
-
-            toFlip.add(newPos);
+            char chipChar = getBoard().getPosition(newPos);
 
             if (chipChar != playerToFlip) {
-                if (chipChar == movingPlayer) {
+                if (chipChar == movingPlayer && foundPlayerToFlip) {
                     return toFlip;
                 } else {
                     return null;
                 }
+            } else {
+                toFlip.add(newPos);
+                foundPlayerToFlip = true;
             }
         }
 
-        return toFlip;
+        return null;
     }
 
     private enum Direction {
@@ -168,12 +168,11 @@ public class Reversi extends Game {
             return 0;
         }
 
-        return board.getPosition(chipPos);
+        return getBoard().getPosition(chipPos);
     }
 
     private int getChipPosition(Direction direction, int pos) {
         //System.out.println("param pos "+pos);
-        char player = NO_CHIP;
 
         boolean onTopColumn = pos < 9;
         boolean onRightRow = pos % 8 == 7;
@@ -237,6 +236,6 @@ public class Reversi extends Game {
         }
 
         //System.out.println("player "+player);
-        return player;
+        return -1;
     }
 }

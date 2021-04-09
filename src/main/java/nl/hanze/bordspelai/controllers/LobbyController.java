@@ -39,7 +39,7 @@ public class LobbyController implements Controller {
         server.sendCommand(Command.GET_PLAYERLIST);
         manager.setState(GameState.LOBBY);
         try {
-            Thread.sleep(100);
+            Thread.sleep(250);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

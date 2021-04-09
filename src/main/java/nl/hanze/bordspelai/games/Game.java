@@ -19,7 +19,7 @@ public abstract class Game {
     private char ownChar;
     private char opponentChar;
     private final int size;
-    protected Board board;
+    private Board board;
 
 //    private final String ownUsername;
 //    private final String opponentUsername;
@@ -56,16 +56,23 @@ public abstract class Game {
         int cardSize = (baseAmount - size) * 10;
         int gap = baseAmount - size;
 
+        // reversi needs 4 filled spots
+        if (this instanceof Reversi) {
+            addMove(27, 'x');
+            addMove(28, 'o');
+            addMove(35, 'o');
+            addMove(36, 'x');
+        }
+
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-
                 Button btn = new Button("");
                 grid.setHgap(gap);
                 grid.setVgap(gap);
                 btn.setStyle("-fx-background-color: #ECECEC; -fx-background-radius: " + gap + "px;");
-                
+
                 btn.setPrefSize(cardSize, cardSize);
-        
+
                 int clicked = size * i + j;
                 btn.setOnAction((event) -> {
                     //addMove(clicked);
@@ -80,14 +87,6 @@ public abstract class Game {
                 buttons.add(btn);
             }
         }
-
-        // reversi needs 4 filled spots
-        if(this instanceof Reversi) {
-            addMove(27, 'x');
-            addMove(28, 'o');
-            addMove(35, 'o');
-            addMove(36, 'x');
-        }
     }
 
     // public String getStartingPlayer() {
@@ -98,8 +97,8 @@ public abstract class Game {
         return size;
     }
 
-    public char[] getBoard() {
-        return board.getBoard();
+    public Board getBoard() {
+        return board;
     }
 
     public char getCharByUsername(String username) {

@@ -25,8 +25,8 @@ public class TicTacToe extends Game {
         int highestScore = Integer.MIN_VALUE;
         int bestMove = 0;
 
-        for (int move : getAvailablePositions(this.board)) {
-            Board newBoard = board.clone();
+        for (int move : getAvailablePositions(getBoard())) {
+            Board newBoard = getBoard().clone();
             newBoard.setPosition(move, getCharByUsername(manager.getUsername()));
             int score = minimax(newBoard, false);
 

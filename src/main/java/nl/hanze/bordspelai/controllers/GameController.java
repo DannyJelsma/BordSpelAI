@@ -42,11 +42,11 @@ public class GameController implements Controller, NetEventListener {
         game.setupBoard(grid);
 
         if (manager.getState().equals(GameState.YOUR_TURN)) {
-            try {
+/*            try {
                 Thread.sleep(250);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
             doBestMove();
         }
 

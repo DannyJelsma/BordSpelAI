@@ -1,6 +1,7 @@
 package nl.hanze.bordspelai.net;
 
 import nl.hanze.bordspelai.enums.Command;
+import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.notifications.GameNotification;
 import nl.hanze.bordspelai.notifications.Notification;
 import nl.hanze.bordspelai.notifications.ServerNotification;
@@ -71,10 +72,9 @@ public class Server {
             }
 
             String commandString = commandBuilder.toString().trim();
+            System.out.println("> " + commandString);
             out.println(commandString);
             String reply = in.readLine();
-            System.out.println("> " + commandString);
-
             System.out.println("< " + reply);
 
             if (reply.equals("OK")) {
@@ -82,6 +82,14 @@ public class Server {
             } else if (reply.startsWith("ERR")) {
                 lastError = reply.split(" ", 2)[1];
                 return false;
+            } else {
+                NetEventManager eventManager = NetEventManager.getInstance();
+
+                if (reply.startsWith("SVR GAME")) {
+                    eventManager.notify(new GameNotification(reply));
+                } else if (reply.startsWith("SVR")) {
+                    eventManager.notify(new ServerNotification(reply));
+                }
             }
         } catch (Exception ex) {
             ex.printStackTrace();

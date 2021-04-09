@@ -16,7 +16,7 @@ import java.util.concurrent.ForkJoinPool;
 
 public class BordspelAI extends Application {
     private static final ForkJoinPool pool = ForkJoinPool.commonPool();
-    private static final Server server = new Server("95.216.161.219", 7789);
+    private static final Server server = new Server("145.33.225.170", 7789);
 
     public static void main(String[] args) {
         NetEventManager netEventMgr = NetEventManager.getInstance();
