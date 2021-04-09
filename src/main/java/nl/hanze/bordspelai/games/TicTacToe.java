@@ -7,25 +7,12 @@ public class TicTacToe extends Game {
         super(3, startingPlayer);
     }
 
-/*    @Override
-    public int doBestMove() {
-        ArrayList<Integer> availableMoves = this.getAvailablePositions();
-        int bestMove = 0;
-
-//        for (int move: availableMoves) {
-        bestMove = availableMoves.get(new Random().nextInt(availableMoves.size())); // random (valid) move
-//        }
-
-        //this.board.getPosition(bestMove] = this.getCharByUsername(manager.getCurrentPlayer());
-        return bestMove;
-    }*/
-
     @Override
     public int doBestMove() {
         int highestScore = Integer.MIN_VALUE;
         int bestMove = 0;
 
-        for (int move : getAvailablePositions(getBoard())) {
+        for (int move : getAvailablePositions(getBoard(), getCharByUsername(manager.getUsername()))) {
             Board newBoard = getBoard().clone();
             newBoard.setPosition(move, getCharByUsername(manager.getUsername()));
             int score = minimax(newBoard, false);
@@ -57,7 +44,7 @@ public class TicTacToe extends Game {
             bestScore = Integer.MIN_VALUE;
             Board newBoard = board.clone();
 
-            for (int move : getAvailablePositions(newBoard)) {
+            for (int move : getAvailablePositions(newBoard, ourChar)) {
                 newBoard.setPosition(move, ourChar);
                 int score = minimax(board, false);
                 bestScore = Math.max(score, bestScore);
@@ -66,7 +53,7 @@ public class TicTacToe extends Game {
             bestScore = Integer.MAX_VALUE;
             Board newBoard = board.clone();
 
-            for (int move : getAvailablePositions(newBoard)) {
+            for (int move : getAvailablePositions(newBoard, ourChar)) {
                 newBoard.setPosition(move, opponentChar);
                 int score = minimax(board, true);
                 bestScore = Math.min(score, bestScore);
@@ -131,7 +118,7 @@ public class TicTacToe extends Game {
     }
 
     @Override
-    protected ArrayList<Integer> getAvailablePositions(Board board) {
+    protected ArrayList<Integer> getAvailablePositions(Board board, char playerToCheck) {
         ArrayList<Integer> availablePositions = new ArrayList<>();
         for (int i = 0; i < board.getSize(); i++) {
             if (board.isPositionAvailable(i)) {
@@ -142,7 +129,7 @@ public class TicTacToe extends Game {
         if (availablePositions.size() == 0) {
             board.reset();
 
-            return getAvailablePositions(board);
+            return getAvailablePositions(board, playerToCheck);
         }
 
         return availablePositions;
