@@ -1,11 +1,23 @@
 package nl.hanze.bordspelai.games;
 
 import java.util.ArrayList;
-
 public class TicTacToe extends Game {
     public TicTacToe(String startingPlayer) {
         super(3, startingPlayer);
     }
+
+/*    @Override
+    public int doBestMove() {
+        ArrayList<Integer> availableMoves = this.getAvailablePositions();
+        int bestMove = 0;
+
+        for (int move: availableMoves) {
+        bestMove = availableMoves.get(new Random().nextInt(availableMoves.size())); // random (valid) move
+        }
+
+        //this.board.getPosition(bestMove] = this.getCharByUsername(manager.getCurrentPlayer());
+        return bestMove;
+    }*/
 
     @Override
     public int doBestMove() {
@@ -15,53 +27,52 @@ public class TicTacToe extends Game {
         for (int move : getAvailablePositions(getBoard(), getCharByUsername(manager.getUsername()))) {
             Board newBoard = getBoard().clone();
             newBoard.setPosition(move, getCharByUsername(manager.getUsername()));
-            int score = minimax(newBoard, false);
+            int score = minimax(newBoard, 0, false);
 
             if (score > highestScore) {
                 highestScore = score;
                 bestMove = move;
             }
         }
-
         return bestMove;
     }
 
-    private int minimax(Board board, boolean maximize) {
+    private int minimax(Board board, int depth, boolean maximize) {
         char winner = getWinner(board);
         char ourChar = getCharByUsername(manager.getUsername());
         char opponentChar = getCharByUsername(manager.getOpponent());
 
         if (winner == ourChar) {
-            return 1;
+            return 10;
         } else if (winner == opponentChar) {
-            return -1;
+            return -10;
         } else if (winner == 'd') {
             return 0;
         }
 
-        int bestScore;
-        if (maximize) {
-            bestScore = Integer.MIN_VALUE;
-            Board newBoard = board.clone();
 
-            for (int move : getAvailablePositions(newBoard, ourChar)) {
+        if (maximize) {
+            int bestScore = Integer.MIN_VALUE;
+
+
+            for (int move : getAvailablePositions(board, getCharByUsername(manager.getUsername()))) {
+                Board newBoard = board.clone();
                 newBoard.setPosition(move, ourChar);
-                int score = minimax(board, false);
+                int score = minimax(newBoard, depth + 1, false);
                 bestScore = Math.max(score, bestScore);
             }
+            return bestScore;
         } else {
-            bestScore = Integer.MAX_VALUE;
-            Board newBoard = board.clone();
+            int bestScore = Integer.MAX_VALUE;
 
-            for (int move : getAvailablePositions(newBoard, ourChar)) {
+            for (int move : getAvailablePositions(board, getCharByUsername(manager.getUsername()))) {
+                Board newBoard = board.clone();
                 newBoard.setPosition(move, opponentChar);
-                int score = minimax(board, true);
+                int score = minimax(newBoard, depth + 1, true);
                 bestScore = Math.min(score, bestScore);
             }
-
+            return bestScore;
         }
-
-        return bestScore;
     }
 
     private char getWinner(Board board) {

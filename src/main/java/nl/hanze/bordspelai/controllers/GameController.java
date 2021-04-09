@@ -43,7 +43,7 @@ public class GameController implements Controller, NetEventListener {
 
         if (manager.getState().equals(GameState.YOUR_TURN)) {
 /*            try {
-                Thread.sleep(250);
+                Thread.sleep(2500);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }*/

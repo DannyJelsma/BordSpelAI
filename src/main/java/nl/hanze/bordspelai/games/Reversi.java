@@ -57,10 +57,56 @@ public class Reversi extends Game {
 
     @Override
     public int doBestMove() {
-        ArrayList<Integer> availablePositions = getAvailablePositions(getBoard(), ownChar);
-        System.out.println("Available pos: " + availablePositions);
+        int highestScore = Integer.MIN_VALUE;
+        int bestMove = 0;
 
-        return availablePositions.get(ThreadLocalRandom.current().nextInt(0, availablePositions.size()));
+        for (int move : getAvailablePositions(getBoard(), getCharByUsername(manager.getUsername()))) {
+            Board newBoard = getBoard().clone();
+            newBoard.setPosition(move, getCharByUsername(manager.getUsername()));
+            int score = minimax(newBoard, 0, false);
+
+            if (score > highestScore) {
+                highestScore = score;
+                bestMove = move;
+            }
+        }
+        return bestMove;
+    }
+    private int minimax(Board board, int depth, boolean maximize) {
+        char winner = getWinner();
+        char ourChar = getCharByUsername(manager.getUsername());
+        char opponentChar = getCharByUsername(manager.getOpponent());
+        if(hasGameEnded()){
+            if (winner == ourChar) {
+                return 10;
+            } else if (winner == opponentChar) {
+                return -10;
+            } else if (winner == 1) {
+                return 0;
+            }
+        }
+
+        if (maximize) {
+            int bestScore = Integer.MIN_VALUE;
+            
+            for (int move :  getAvailablePositions(board, getCharByUsername(manager.getUsername()))) {
+                Board newBoard = board.clone();
+                newBoard.setPosition(move, ourChar);
+                int score = minimax(newBoard, depth + 1, false);
+                bestScore = Math.max(score, bestScore);
+            }
+            return bestScore;
+        } else {
+            int bestScore = Integer.MAX_VALUE;
+
+            for (int move : getAvailablePositions(board, getCharByUsername(manager.getUsername()))) {
+                Board newBoard = board.clone();
+                newBoard.setPosition(move, opponentChar);
+                int score = minimax(newBoard, depth + 1, true);
+                bestScore = Math.min(score, bestScore);
+            }
+            return bestScore;
+        }
     }
 
     private boolean isValidMove(int pos, char opponent) {
