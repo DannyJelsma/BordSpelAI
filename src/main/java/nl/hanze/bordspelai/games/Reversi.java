@@ -104,6 +104,8 @@ public class Reversi extends Game {
         return getAvailablePositions(getBoard(), ownChar).size() == 0 && getAvailablePositions(getBoard(), opponentChar).size() == 0;
     }
 
+    // Returns 0 when game hasn't ended.
+    // Returns 1 when draw.
     public char getWinner() {
         if (!hasGameEnded()) {
             return 0;
@@ -114,8 +116,10 @@ public class Reversi extends Game {
 
         if (ownChips > opponentChips) {
             return ownChar;
-        } else {
+        } else if (opponentChips > ownChips) {
             return opponentChar;
+        } else {
+            return 1;
         }
     }
 
