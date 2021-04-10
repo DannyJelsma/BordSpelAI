@@ -11,6 +11,7 @@ import nl.hanze.bordspelai.managers.GameManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 public abstract class Game {
     public final GameManager manager = GameManager.getInstance();
@@ -121,10 +122,10 @@ public abstract class Game {
         addMove(position, getCharByUsername(manager.getCurrentPlayer()));
     }
 
-    protected abstract ArrayList<Integer> getAvailablePositions(Board board, char playerToCheck);
+    public abstract Set<Integer> getAvailablePositions(Board board, char playerToCheck);
 
     public void updateMove(int position) {
-        Platform.runLater(() -> {
+        new Thread(() -> Platform.runLater(() -> {
             Button btn = buttons.get(position);
 
             char move = board.getPosition(position);
@@ -138,7 +139,7 @@ public abstract class Game {
             // } else move = 'x';
 
             // might not be the cleanest way of solving the different gamemodes.
-            if(this instanceof Reversi) {
+            if (this instanceof Reversi) {
                 // we can just use circles here instead of changing images.
                 Circle circle = new Circle();
                 circle.setRadius(imageSize / 2 * 1.05);
@@ -161,7 +162,7 @@ public abstract class Game {
                 ImageView view = new ImageView(image);
                 btn.setGraphic(view);
             }
-        });
+        })).start();
     }
 
     public abstract int doBestMove();

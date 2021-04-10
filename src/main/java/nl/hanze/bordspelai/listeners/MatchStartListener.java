@@ -2,7 +2,6 @@ package nl.hanze.bordspelai.listeners;
 
 import javafx.application.Platform;
 import nl.hanze.bordspelai.controllers.GameController;
-import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.games.Game;
@@ -28,7 +27,6 @@ public class MatchStartListener implements NetEventListener {
 
                 GameManager manager = GameManager.getInstance();
                 String opponent = dataMap.get("OPPONENT");
-                String toMove = dataMap.get("PLAYERTOMOVE");
 /*                Alert alert = new AlertBuilder(Alert.AlertType.CONFIRMATION)
                         .setTitle("Match started")
                         .setContent("A match of " + gameType + " has started. Playing against: " + opponent)
@@ -36,12 +34,6 @@ public class MatchStartListener implements NetEventListener {
 
                 alert.show();*/
                 manager.setOpponent(opponent);
-
-                if (toMove.equalsIgnoreCase(opponent)) {
-                    manager.setState(GameState.OPPONENT_TURN);
-                } else {
-                    manager.setState(GameState.YOUR_TURN);
-                }
 
                 Game game = null;
                 GameController gameController = null;

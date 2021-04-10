@@ -1,6 +1,8 @@
 package nl.hanze.bordspelai.games;
 
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+
 public class TicTacToe extends Game {
     public TicTacToe(String startingPlayer) {
         super(3, startingPlayer);
@@ -129,8 +131,8 @@ public class TicTacToe extends Game {
     }
 
     @Override
-    protected ArrayList<Integer> getAvailablePositions(Board board, char playerToCheck) {
-        ArrayList<Integer> availablePositions = new ArrayList<>();
+    public Set<Integer> getAvailablePositions(Board board, char playerToCheck) {
+        Set<Integer> availablePositions = new HashSet<>();
         for (int i = 0; i < board.getSize(); i++) {
             if (board.isPositionAvailable(i)) {
                 availablePositions.add(i);

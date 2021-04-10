@@ -1,7 +1,9 @@
 package nl.hanze.bordspelai.games;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 public class Board {
 
@@ -34,6 +36,18 @@ public class Board {
         Objects.requireNonNull(newBoard);
         reset();
         System.arraycopy(newBoard, 0, board, 0, 64);
+    }
+
+    public Set<Integer> getAllUsedPositions() {
+        Set<Integer> usedPositions = new HashSet<>();
+
+        for (int i = 0; i < getBoard().length; i++) {
+            if (getPosition(i) != 0) {
+                usedPositions.add(i);
+            }
+        }
+
+        return usedPositions;
     }
 
     public void setPosition(int position, char character) {
