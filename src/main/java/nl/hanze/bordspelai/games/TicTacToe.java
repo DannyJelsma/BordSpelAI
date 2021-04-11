@@ -1,7 +1,7 @@
 package nl.hanze.bordspelai.games;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TicTacToe extends Game {
     public TicTacToe(String startingPlayer) {
@@ -27,7 +27,7 @@ public class TicTacToe extends Game {
         int bestMove = 0;
 
         for (int move : getAvailablePositions(getBoard(), getCharByUsername(manager.getUsername()))) {
-            Board newBoard = getBoard().clone();
+            Board newBoard = new Board(getBoard());
             newBoard.setPosition(move, getCharByUsername(manager.getUsername()));
             int score = minimax(newBoard, 0, false);
 
@@ -58,7 +58,7 @@ public class TicTacToe extends Game {
 
 
             for (int move : getAvailablePositions(board, getCharByUsername(manager.getUsername()))) {
-                Board newBoard = board.clone();
+                Board newBoard = new Board(board);
                 newBoard.setPosition(move, ourChar);
                 int score = minimax(newBoard, depth + 1, false);
                 bestScore = Math.max(score, bestScore);
@@ -68,7 +68,7 @@ public class TicTacToe extends Game {
             int bestScore = Integer.MAX_VALUE;
 
             for (int move : getAvailablePositions(board, getCharByUsername(manager.getUsername()))) {
-                Board newBoard = board.clone();
+                Board newBoard = new Board(board);
                 newBoard.setPosition(move, opponentChar);
                 int score = minimax(newBoard, depth + 1, true);
                 bestScore = Math.min(score, bestScore);
@@ -131,8 +131,8 @@ public class TicTacToe extends Game {
     }
 
     @Override
-    public Set<Integer> getAvailablePositions(Board board, char playerToCheck) {
-        Set<Integer> availablePositions = new HashSet<>();
+    public List<Integer> getAvailablePositions(Board board, char playerToCheck) {
+        List<Integer> availablePositions = new ArrayList<>();
         for (int i = 0; i < board.getSize(); i++) {
             if (board.isPositionAvailable(i)) {
                 availablePositions.add(i);

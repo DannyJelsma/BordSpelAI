@@ -11,7 +11,7 @@ import nl.hanze.bordspelai.managers.GameManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Set;
+import java.util.List;
 
 public abstract class Game {
     public final GameManager manager = GameManager.getInstance();
@@ -122,7 +122,7 @@ public abstract class Game {
         addMove(position, getCharByUsername(manager.getCurrentPlayer()));
     }
 
-    public abstract Set<Integer> getAvailablePositions(Board board, char playerToCheck);
+    public abstract List<Integer> getAvailablePositions(Board board, char playerToCheck);
 
     public void updateMove(int position) {
         new Thread(() -> Platform.runLater(() -> {

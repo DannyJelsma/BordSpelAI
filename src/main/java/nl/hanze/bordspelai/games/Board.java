@@ -1,5 +1,6 @@
 package nl.hanze.bordspelai.games;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -17,6 +18,11 @@ public class Board {
     public Board(int size, char[] board) {
         this.size = size;
         this.board = board;
+    }
+
+    public Board(Board board) {
+        this.board = board.getBoard().clone();
+        this.size = board.getSize();
     }
 
     public int getSize() {
@@ -84,20 +90,13 @@ public class Board {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-
         if (o == null || getClass() != o.getClass()) return false;
-
         Board board1 = (Board) o;
-
-        return new org.apache.commons.lang3.builder.EqualsBuilder().append(board, board1.board).isEquals();
+        return size == board1.size && Arrays.equals(board, board1.board);
     }
 
     @Override
     public int hashCode() {
-        return new org.apache.commons.lang3.builder.HashCodeBuilder(17, 37).append(board).toHashCode();
-    }
-
-    public Board clone() {
-        return new Board(size, board.clone());
+        return Arrays.hashCode(board);
     }
 }
