@@ -73,6 +73,10 @@ public class GameController implements Controller, NetEventListener {
         this.server.sendCommand(Command.MOVE, String.valueOf(bestMove));
     }
 
+    public Game getGame() {
+        return game;
+    }
+
     @Override
     public void update(Notification notification) {
         updateTurnState(notification);

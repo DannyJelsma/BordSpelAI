@@ -7,6 +7,8 @@ import nl.hanze.bordspelai.controllers.LobbyController;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.events.NetEventManager;
+import nl.hanze.bordspelai.games.Game;
+import nl.hanze.bordspelai.games.Reversi;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.notifications.Notification;
@@ -47,8 +49,13 @@ public class WinLossListener implements NetEventListener {
                     return;
             }
 
-            NetEventManager.getInstance().unregister(GameManager.getInstance().getGameController());
+            Game game = GameManager.getInstance().getGameController().getGame();
 
+            if (game instanceof Reversi) {
+                ((Reversi) game).clearCache();
+            }
+
+            NetEventManager.getInstance().unregister(GameManager.getInstance().getGameController());
             View view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
             SceneManager.switchScene(view);
         });

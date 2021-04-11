@@ -33,6 +33,10 @@ public class Reversi extends Game {
         }
     }
 
+    public void clearCache() {
+        minimaxCache.clear();
+    }
+
     @Override
     public List<Integer> getAvailablePositions(Board board, char playerToCheck) {
         List<Integer> availablePositions = new ArrayList<>();
@@ -173,7 +177,6 @@ public class Reversi extends Game {
         }
 
         calculations++;
-
         if (maximize) {
             int bestScore = Integer.MIN_VALUE;
             List<Integer> availablePositions = getAvailablePositions(board, ownChar);
@@ -287,7 +290,7 @@ public class Reversi extends Game {
         char charToCheck = maximize ? ownChar : opponentChar;
         char otherChar = maximize ? opponentChar : ownChar;
 
-        if (board.getAllUsedPositions().size() >= 30) {
+        if (board.getAllUsedPositions().size() >= 32) {
             int opponentAmount = board.getAmount(opponentChar);
             int ourAmount = board.getAmount(ownChar);
 
@@ -303,7 +306,7 @@ public class Reversi extends Game {
         List<Integer> flippedChips = getAllFlippedChips(board, move, charToCheck, otherChar);
 
         for (int flipped : flippedChips) {
-            score += 2.5 * WEIGHTS[flipped];
+            score += 5.0 * WEIGHTS[flipped];
         }
 
         return score;
