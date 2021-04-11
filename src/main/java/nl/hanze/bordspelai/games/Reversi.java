@@ -290,7 +290,7 @@ public class Reversi extends Game {
         char charToCheck = maximize ? ownChar : opponentChar;
         char otherChar = maximize ? opponentChar : ownChar;
 
-        if (board.getAllUsedPositions().size() >= 32) {
+        if (board.getAllUsedPositions().size() >= 35) {
             int opponentAmount = board.getAmount(opponentChar);
             int ourAmount = board.getAmount(ownChar);
 
@@ -299,6 +299,9 @@ public class Reversi extends Game {
             } else {
                 score -= opponentAmount - ourAmount;
             }
+        } else {
+            score += getAvailablePositions(board, charToCheck).size();
+            score -= getAvailablePositions(board, otherChar).size();
         }
 
         score += 10 * WEIGHTS[move];
@@ -306,7 +309,7 @@ public class Reversi extends Game {
         List<Integer> flippedChips = getAllFlippedChips(board, move, charToCheck, otherChar);
 
         for (int flipped : flippedChips) {
-            score += 5.0 * WEIGHTS[flipped];
+            score += 7.5 * WEIGHTS[flipped];
         }
 
         return score;
