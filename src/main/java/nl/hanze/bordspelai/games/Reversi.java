@@ -3,8 +3,6 @@ package nl.hanze.bordspelai.games;
 import nl.hanze.bordspelai.managers.GameManager;
 
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class Reversi extends Game {
 
@@ -12,14 +10,13 @@ public class Reversi extends Game {
 
     private final char ownChar;
     private final char opponentChar;
-    private final GameManager manager = GameManager.getInstance();
-    private final ExecutorService executor;
+    private final Map<Board, Integer> minimaxCache = new HashMap<>();
 
     public Reversi(String startingPlayer) {
         super(8, startingPlayer);
-        this.executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
         // set players char
+        GameManager manager = GameManager.getInstance();
         if (startingPlayer.equals(manager.getUsername())) {
             this.ownChar = 'o';
             this.opponentChar = 'x';
@@ -61,8 +58,13 @@ public class Reversi extends Game {
         return toFlip;
     }
 
+    private static int cacheHits = 0;
+    private static int calculations = 0;
+
     @Override
     public int doBestMove() {
+        calculations = 0;
+        cacheHits = 0;
         Board newBoard = getBoard().clone();
         long endTime = System.currentTimeMillis() + 7500;
         int highestScore = Integer.MIN_VALUE;
@@ -90,6 +92,10 @@ public class Reversi extends Game {
             }
         }
 
+        System.out.println("Cache hits: " + cacheHits);
+        System.out.println("Calculations: " + calculations);
+        System.out.println("Cache hit ratio: " + ((float) cacheHits / (float) calculations * 100f));
+        System.out.println("Size: " + minimaxCache.size());
         return bestMove;
 
 /*        Object[] avail = getAvailablePositions(getBoard(), ownChar).toArray();
@@ -100,6 +106,13 @@ public class Reversi extends Game {
     }
 
     private int minimax(Board board, int depth, boolean maximize, int alpha, int beta, long endTime) {
+        calculations++;
+        if (minimaxCache.containsKey(board)) {
+            cacheHits++;
+            //System.out.println("Hit cache");
+            return minimaxCache.get(board);
+        }
+
         if (hasGameEnded(board)) {
             char winner = getWinner(board);
 
@@ -146,6 +159,7 @@ public class Reversi extends Game {
                 if (beta <= alpha) break;
             }
 
+            minimaxCache.put(board.clone(), bestScore);
             return bestScore;
         } else {
             int bestScore = Integer.MAX_VALUE;
@@ -156,8 +170,7 @@ public class Reversi extends Game {
                     int ourAmount = board.getAmount(ownChar);
                     int score = opponentAmount - ourAmount;
 
-                    bestScore = Math.max(score, bestScore);
-                    break;
+                    return Math.min(score, bestScore);
                 }
 
                 List<Integer> flippedChips = getAllFlippedChips(board, move, opponentChar, ownChar);
@@ -180,6 +193,8 @@ public class Reversi extends Game {
 
                 if (beta <= alpha) break;
             }
+
+            minimaxCache.put(board, bestScore);
             return bestScore;
         }
     }

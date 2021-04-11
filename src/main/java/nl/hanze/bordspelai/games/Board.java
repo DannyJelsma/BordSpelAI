@@ -92,9 +92,7 @@ public class Board {
 
     @Override
     public int hashCode() {
-        int result = Objects.hash(size);
-        result = 31 * result + Arrays.hashCode(board);
-        return result;
+        return Arrays.hashCode(board);
     }
 
     public Board clone() {

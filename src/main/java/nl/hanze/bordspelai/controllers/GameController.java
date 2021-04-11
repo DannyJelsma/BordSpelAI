@@ -14,7 +14,6 @@ import nl.hanze.bordspelai.notifications.Notification;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 public class GameController implements Controller, NetEventListener {
     @FXML
@@ -71,14 +70,7 @@ public class GameController implements Controller, NetEventListener {
 
     public void doBestMove() {
         int bestMove = game.doBestMove();
-
-        Set<Integer> availablePositions = game.getAvailablePositions(game.getBoard(), game.getCharByUsername(manager.getUsername()));
-        if (!availablePositions.contains(bestMove)) {
-            this.server.sendCommand(Command.MOVE, String.valueOf(availablePositions.toArray()[0]));
-            System.out.println("ERROR: Tried to do illegal move at position " + bestMove);
-        } else {
-            this.server.sendCommand(Command.MOVE, String.valueOf(bestMove));
-        }
+        this.server.sendCommand(Command.MOVE, String.valueOf(bestMove));
     }
 
     @Override
@@ -87,8 +79,8 @@ public class GameController implements Controller, NetEventListener {
 
         if (notification.getNotificationType().equals("MOVE")) {
             Map<String, String> data = notification.getDataMap();
-
             int position = Integer.parseInt(data.get("MOVE"));
+
             game.addMove(position);
         }
 
