@@ -6,13 +6,16 @@ import javafx.scene.layout.GridPane;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
+import nl.hanze.bordspelai.events.NetEventListener;
 import nl.hanze.bordspelai.games.Game;
 import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.net.Server;
+import nl.hanze.bordspelai.notifications.Notification;
 
 import java.util.ArrayList;
+import java.util.Map;
 
-public class GameController implements Controller {
+public class GameController implements Controller, NetEventListener {
     @FXML
     private GridPane grid;
     private final Server server = BordspelAI.getServer();
@@ -72,5 +75,33 @@ public class GameController implements Controller {
 
     public Game getGame() {
         return game;
+    }
+
+    @Override
+    public void update(Notification notification) {
+        updateTurnState(notification);
+
+        if (notification.getNotificationType().equals("MOVE")) {
+            Map<String, String> data = notification.getDataMap();
+            int position = Integer.parseInt(data.get("MOVE"));
+
+            game.addMove(position);
+        }
+
+        if (notification.getNotificationType().equals("YOURTURN")) {
+            doBestMove();
+        }
+    }
+
+    private void updateTurnState(Notification notification) {
+        Map<String, String> data = notification.getDataMap();
+
+        if (notification.getNotificationType().equals("MOVE")) {
+            if (data.get("PLAYER").equals(manager.getUsername())) {
+                manager.setState(GameState.OPPONENT_TURN);
+            } else if (data.get("PLAYER").equals(manager.getOpponent())) {
+                manager.setState(GameState.YOUR_TURN);
+            }
+        }
     }
 }

@@ -1,13 +1,11 @@
 package nl.hanze.bordspelai.games;
 
-import nl.hanze.bordspelai.cache.MinimaxCache;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.managers.GameManager;
+import nl.hanze.bordspelai.minimax.MinimaxCache;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,6 +17,7 @@ public class Reversi extends Game {
     private final char ownChar;
     private final char opponentChar;
     private final MinimaxCache minimaxCache = new MinimaxCache();
+    private final Deque<CompletableFuture<Integer>> queue = new ArrayDeque<>();
     private int cacheHits = 0;
     private int calculations = 0;
     private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
@@ -76,6 +75,7 @@ public class Reversi extends Game {
     }
 
     private static final List<Integer> CORNERS = List.of(0, 7, 56, 63);
+
     @Override
     public int doBestMove() {
         calculations = 0;
@@ -393,9 +393,9 @@ public class Reversi extends Game {
 
         if (isStable(board, move, maximize)) {
             if (maximize) {
-                score += 25;
+                score += 50;
             } else {
-                score -= 25;
+                score -= 50;
             }
         }
 
@@ -433,9 +433,9 @@ public class Reversi extends Game {
 
             if (isStable(board, flipped, maximize)) {
                 if (maximize) {
-                    score += 30;
+                    score += 40;
                 } else {
-                    score -= 30;
+                    score -= 40;
                 }
             }
         }

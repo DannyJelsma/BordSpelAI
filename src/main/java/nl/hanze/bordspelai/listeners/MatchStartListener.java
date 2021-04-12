@@ -3,6 +3,7 @@ package nl.hanze.bordspelai.listeners;
 import javafx.application.Platform;
 import nl.hanze.bordspelai.controllers.GameController;
 import nl.hanze.bordspelai.events.NetEventListener;
+import nl.hanze.bordspelai.events.NetEventManager;
 import nl.hanze.bordspelai.games.Game;
 import nl.hanze.bordspelai.games.Reversi;
 import nl.hanze.bordspelai.games.TicTacToe;
@@ -49,6 +50,7 @@ public class MatchStartListener implements NetEventListener {
                 }
 
                 if (game != null) {
+                    NetEventManager.getInstance().register(gameController);
                     manager.setGameController(gameController);
                     SceneManager.switchScene(view);
                 }

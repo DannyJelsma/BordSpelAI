@@ -1,4 +1,4 @@
-package nl.hanze.bordspelai.cache;
+package nl.hanze.bordspelai.minimax;
 
 import nl.hanze.bordspelai.games.BoardState;
 
