@@ -1,12 +1,15 @@
 package nl.hanze.bordspelai.games;
 
+import nl.hanze.bordspelai.cache.MinimaxCache;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.managers.GameManager;
 
-import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Reversi extends Game {
 
@@ -14,10 +17,10 @@ public class Reversi extends Game {
 
     private final char ownChar;
     private final char opponentChar;
-    private final Map<BoardState, Integer> minimaxCache = new HashMap<>();
+    private final MinimaxCache minimaxCache = new MinimaxCache();
     private int cacheHits = 0;
     private int calculations = 0;
-    private ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private final ExecutorService executor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
 
     public Reversi(String startingPlayer) {
         super(8, startingPlayer);
@@ -34,7 +37,7 @@ public class Reversi extends Game {
     }
 
     public void clearCache() {
-        minimaxCache.clear();
+        minimaxCache.reset();
     }
 
     @Override
@@ -77,47 +80,58 @@ public class Reversi extends Game {
         cacheHits = 0;
         Board newBoard = new Board(getBoard());
         long endTime = System.currentTimeMillis() + 5000;
-        int highestScore = Integer.MIN_VALUE;
-        int bestMove = Integer.MIN_VALUE;
+        final AtomicInteger highestScore = new AtomicInteger(Integer.MIN_VALUE);
+        final AtomicInteger bestMove = new AtomicInteger(Integer.MIN_VALUE);
         List<Integer> availableMoves = getAvailablePositions(newBoard, ownChar);
+        List<Future> threads = new ArrayList<>();
 
         System.out.println("Available: " + availableMoves);
         availableMoves.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, (int) move, false)).reversed());
 
         for (int move : availableMoves) {
-            List<Integer> flippedChips = getAllFlippedChips(newBoard, move, ownChar, opponentChar);
-            newBoard.setPosition(move, ownChar);
+            threads.add(executor.submit(() -> {
+                List<Integer> flippedChips = getAllFlippedChips(newBoard, move, ownChar, opponentChar);
+                newBoard.setPosition(move, ownChar);
 
-            for (int chip : flippedChips) {
-                newBoard.setPosition(chip, ownChar);
-            }
+                for (int chip : flippedChips) {
+                    newBoard.setPosition(chip, ownChar);
+                }
 
-            int score = minimax(newBoard, 0, false, Integer.MIN_VALUE, Integer.MAX_VALUE, endTime, false);
-            if (score > highestScore) {
-                highestScore = score;
-                bestMove = move;
-            }
+                int score = minimax(newBoard, 0, false, Integer.MIN_VALUE, Integer.MAX_VALUE, endTime, false);
+                if (score > highestScore.get()) {
+                    highestScore.set(score);
+                    bestMove.set(move);
+                }
 
-            newBoard.clearPosition(move);
-            for (int chip : flippedChips) {
-                newBoard.setPosition(chip, opponentChar);
+                newBoard.clearPosition(move);
+                for (int chip : flippedChips) {
+                    newBoard.setPosition(chip, opponentChar);
+                }
+            }));
+        }
+
+        for (Future thread : threads) {
+            try {
+                thread.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         }
 
         System.out.println("Cache hits: " + cacheHits);
         System.out.println("Calculations: " + calculations);
         System.out.println("Cache hit ratio: " + ((float) cacheHits / (float) calculations * 100f));
-        System.out.println("Cache Size: " + minimaxCache.size());
+        System.out.println("Cache Size: " + minimaxCache.getSize());
 
         // Failsafe
         List<Integer> avail = getAvailablePositions(getBoard(), ownChar);
-        if (!getAvailablePositions(getBoard(), ownChar).contains(bestMove)) {
-            System.out.println("ERROR: Tried to do an illegal move at " + bestMove + ".");
+        if (!getAvailablePositions(getBoard(), ownChar).contains(bestMove.get())) {
+            System.out.println("ERROR: Tried to do an illegal move at " + bestMove.get() + ".");
 
             return avail.get(ThreadLocalRandom.current().nextInt(0, avail.size()));
         }
 
-        return bestMove;
+        return bestMove.get();
     }
 
     public void doBackgroundCalculations() {
@@ -128,7 +142,7 @@ public class Reversi extends Game {
 
         // Fill cache while waiting for the opponent
         List<Integer> availablePositions = getAvailablePositions(newBoard, opponentChar);
-        availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, move, false)));
+        availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, (int) move, false)).reversed());
         while (manager.getState().equals(GameState.OPPONENT_TURN)) {
             for (int move : availablePositions) {
                 List<Integer> flippedChips = getAllFlippedChips(newBoard, move, opponentChar, ownChar);
@@ -141,6 +155,7 @@ public class Reversi extends Game {
                 List<Integer> ourAvailablePositions = getAvailablePositions(newBoard, ownChar);
                 ourAvailablePositions.sort(Comparator.comparingInt(move2 -> doHeuristics(newBoard, move2, true)));
                 for (int move2 : ourAvailablePositions) {
+                    //executor.submit(() -> {
                     List<Integer> flippedChips2 = getAllFlippedChips(newBoard, move2, ownChar, opponentChar);
                     newBoard.setPosition(move2, ownChar);
 
@@ -154,11 +169,12 @@ public class Reversi extends Game {
                     for (int chip : flippedChips2) {
                         newBoard.setPosition(chip, opponentChar);
                     }
-                }
 
-                newBoard.clearPosition(move);
-                for (int chip : flippedChips) {
-                    newBoard.setPosition(chip, ownChar);
+                    newBoard.clearPosition(move);
+                    for (int chip : flippedChips) {
+                        newBoard.setPosition(chip, ownChar);
+                    }
+                    //});
                 }
             }
         }
@@ -166,7 +182,7 @@ public class Reversi extends Game {
         System.out.println("BG - Cache hits: " + cacheHits);
         System.out.println("BG - Calculations: " + calculations);
         System.out.println("BG - Cache hit ratio: " + ((float) cacheHits / (float) calculations * 100f));
-        System.out.println("BG - Cache Size: " + minimaxCache.size());
+        System.out.println("BG - Cache Size: " + minimaxCache.getSize());
     }
 
     private int minimax(Board board, int depth, boolean maximize, int alpha, int beta, long endTime, boolean isBackgroundTask) {
@@ -197,6 +213,7 @@ public class Reversi extends Game {
         if (maximize) {
             int bestScore = Integer.MIN_VALUE;
             List<Integer> availablePositions = getAvailablePositions(board, ownChar);
+            availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(board, move, true)));
 
             for (int move : availablePositions) {
                 if (System.currentTimeMillis() > endTime) {
@@ -215,13 +232,14 @@ public class Reversi extends Game {
                 //System.out.println(Arrays.toString(board.getBoard()) + " -> " + Arrays.toString(board.getBoard()));
 
                 BoardState state = new BoardState(board.hashCode(), depth, move);
+                int size = board.getSize();
                 int score;
-                if (minimaxCache.containsKey(state)) {
+                if (minimaxCache.containsState(state, size)) {
                     cacheHits++;
-                    score = minimaxCache.get(state);
+                    score = minimaxCache.getScoreForState(state, size);
                 } else {
                     score = minimax(board, depth + 1, false, alpha, beta, endTime, isBackgroundTask);
-                    minimaxCache.put(state, bestScore);
+                    minimaxCache.addBoardState(state, size, bestScore);
                 }
 
                 bestScore = Math.max(score, bestScore);
@@ -239,6 +257,7 @@ public class Reversi extends Game {
         } else {
             int bestScore = Integer.MAX_VALUE;
             List<Integer> availablePositions = getAvailablePositions(board, opponentChar);
+            availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(board, (int) move, false)).reversed());
 
             for (int move : availablePositions) {
                 if (System.currentTimeMillis() > endTime) {
@@ -257,13 +276,14 @@ public class Reversi extends Game {
                 //System.out.println(Arrays.toString(board.getBoard()) + " -> " + Arrays.toString(board.getBoard()));
 
                 BoardState state = new BoardState(board.hashCode(), depth, move);
+                int size = board.getSize();
                 int score;
-                if (minimaxCache.containsKey(state)) {
+                if (minimaxCache.containsState(state, size)) {
                     cacheHits++;
-                    score = minimaxCache.get(state);
+                    score = minimaxCache.getScoreForState(state, size);
                 } else {
                     score = minimax(board, depth + 1, true, alpha, beta, endTime, isBackgroundTask);
-                    minimaxCache.put(state, bestScore);
+                    minimaxCache.addBoardState(state, size, bestScore);
                 }
 
                 bestScore = Math.min(score, bestScore);
@@ -335,25 +355,6 @@ public class Reversi extends Game {
         int score = 0;
         char charToCheck = maximize ? ownChar : opponentChar;
         char otherChar = maximize ? opponentChar : ownChar;
-
-        if (board.getAllUsedPositions().size() >= 32) {
-            int opponentAmount = board.getAmount(opponentChar);
-            int ourAmount = board.getAmount(ownChar);
-
-            if (maximize) {
-                score += ourAmount - opponentAmount;
-            } else {
-                score -= opponentAmount - ourAmount;
-            }
-        } else if (board.getAllUsedPositions().size() <= 16) {
-            if (maximize) {
-                score += getAvailablePositions(board, charToCheck).size();
-                score -= getAvailablePositions(board, otherChar).size();
-            } else {
-                score -= getAvailablePositions(board, charToCheck).size();
-                score += getAvailablePositions(board, otherChar).size();
-            }
-        }
 
         if (maximize) {
             score += 10 * weights[move];
@@ -454,6 +455,7 @@ public class Reversi extends Game {
             }
         }
 
+        minimaxCache.removeRedundantEntries(getBoard().getSize());
         if (charToMove == ownChar) {
             executor.submit(this::doBackgroundCalculations);
         }
