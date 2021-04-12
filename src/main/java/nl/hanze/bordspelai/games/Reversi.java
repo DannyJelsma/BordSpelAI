@@ -128,7 +128,7 @@ public class Reversi extends Game {
 
         // Fill cache while waiting for the opponent
         List<Integer> availablePositions = getAvailablePositions(newBoard, opponentChar);
-        availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, move, true)));
+        availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, move, false)));
         while (manager.getState().equals(GameState.OPPONENT_TURN)) {
             for (int move : availablePositions) {
                 List<Integer> flippedChips = getAllFlippedChips(newBoard, move, opponentChar, ownChar);
@@ -138,10 +138,27 @@ public class Reversi extends Game {
                     newBoard.setPosition(chip, opponentChar);
                 }
 
-                minimax(newBoard, 0, true, Integer.MIN_VALUE, Integer.MAX_VALUE, endTime, true);
+                List<Integer> ourAvailablePositions = getAvailablePositions(newBoard, ownChar);
+                ourAvailablePositions.sort(Comparator.comparingInt(move2 -> doHeuristics(newBoard, move2, true)));
+                for (int move2 : ourAvailablePositions) {
+                    List<Integer> flippedChips2 = getAllFlippedChips(newBoard, move2, ownChar, opponentChar);
+                    newBoard.setPosition(move2, ownChar);
+
+                    for (int chip : flippedChips2) {
+                        newBoard.setPosition(chip, ownChar);
+                    }
+
+                    minimax(newBoard, 0, false, Integer.MIN_VALUE, Integer.MAX_VALUE, endTime, true);
+                    newBoard.clearPosition(move2);
+
+                    for (int chip : flippedChips2) {
+                        newBoard.setPosition(chip, opponentChar);
+                    }
+                }
+
                 newBoard.clearPosition(move);
                 for (int chip : flippedChips) {
-                    newBoard.setPosition(chip, opponentChar);
+                    newBoard.setPosition(chip, ownChar);
                 }
             }
         }
@@ -180,7 +197,6 @@ public class Reversi extends Game {
         if (maximize) {
             int bestScore = Integer.MIN_VALUE;
             List<Integer> availablePositions = getAvailablePositions(board, ownChar);
-            availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(board, move, true)));
 
             for (int move : availablePositions) {
                 if (System.currentTimeMillis() > endTime) {
@@ -223,13 +239,12 @@ public class Reversi extends Game {
         } else {
             int bestScore = Integer.MAX_VALUE;
             List<Integer> availablePositions = getAvailablePositions(board, opponentChar);
-            availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(board, (int) move, false)).reversed());
 
             for (int move : availablePositions) {
                 if (System.currentTimeMillis() > endTime) {
                     int score = doHeuristics(board, move, false);
 
-                    return Math.max(score, bestScore);
+                    return Math.min(score, bestScore);
                 }
 
                 List<Integer> flippedChips = getAllFlippedChips(board, move, opponentChar, ownChar);
@@ -275,22 +290,53 @@ public class Reversi extends Game {
     private static final List<Integer> C_SQUARES = List.of(8, 1, 6, 15, 48, 57, 55, 62);*/
 
     // Weights taken from the follwing source (Chapter 5.2): https://courses.cs.washington.edu/courses/cse573/04au/Project/mini1/RUSSIA/Final_Paper.pdf
-    private static final int[] WEIGHTS = new int[]
-            {4, -3, 2, 2, 2, 2, -3, 4,
-                    -3, -4, -1, -1, -1, -1, -4, -3,
-                    2, -1, 1, 0, 0, 1, -1, 2,
-                    2, -1, 0, 1, 1, 0, -1, 2,
-                    2, -1, 0, 1, 1, 0, -1, 2,
-                    2, -1, 1, 0, 0, 1, -1, 2,
-                    -3, -4, -1, -1, -1, -1, -4, -3,
-                    4, -3, 2, 2, 2, 2, -3, 4};
+    private int[] getWeights(Board board, boolean maximize) {
+        char charToCheck = maximize ? ownChar : opponentChar;
+        int[] weights = new int[]
+                {4, -3, 2, 2, 2, 2, -3, 4,
+                        -3, -4, -1, -1, -1, -1, -4, -3,
+                        2, -1, 1, 0, 0, 1, -1, 2,
+                        2, -1, 0, 1, 1, 0, -1, 2,
+                        2, -1, 0, 1, 1, 0, -1, 2,
+                        2, -1, 1, 0, 0, 1, -1, 2,
+                        -3, -4, -1, -1, -1, -1, -4, -3,
+                        4, -3, 2, 2, 2, 2, -3, 4};
+
+        // XSquares and CSquares become important when you are in the corner, as they become unflippable.
+        if (board.getPosition(0) == charToCheck) {
+            weights[1] = 2;
+            weights[8] = 2;
+            weights[9] = 1;
+        }
+
+        if (board.getPosition(7) == charToCheck) {
+            weights[6] = 2;
+            weights[14] = 1;
+            weights[15] = 2;
+        }
+
+        if (board.getPosition(56) == charToCheck) {
+            weights[48] = 2;
+            weights[49] = 1;
+            weights[57] = 2;
+        }
+
+        if (board.getPosition(63) == charToCheck) {
+            weights[54] = 1;
+            weights[55] = 2;
+            weights[62] = 2;
+        }
+
+        return weights;
+    }
 
     private int doHeuristics(Board board, int move, boolean maximize) {
+        int[] weights = getWeights(board, maximize);
         int score = 0;
         char charToCheck = maximize ? ownChar : opponentChar;
         char otherChar = maximize ? opponentChar : ownChar;
 
-        if (board.getAllUsedPositions().size() >= 35) {
+        if (board.getAllUsedPositions().size() >= 32) {
             int opponentAmount = board.getAmount(opponentChar);
             int ourAmount = board.getAmount(ownChar);
 
@@ -299,17 +345,30 @@ public class Reversi extends Game {
             } else {
                 score -= opponentAmount - ourAmount;
             }
-        } else {
-            score += getAvailablePositions(board, charToCheck).size();
-            score -= getAvailablePositions(board, otherChar).size();
+        } else if (board.getAllUsedPositions().size() <= 16) {
+            if (maximize) {
+                score += getAvailablePositions(board, charToCheck).size();
+                score -= getAvailablePositions(board, otherChar).size();
+            } else {
+                score -= getAvailablePositions(board, charToCheck).size();
+                score += getAvailablePositions(board, otherChar).size();
+            }
         }
 
-        score += 10 * WEIGHTS[move];
+        if (maximize) {
+            score += 10 * weights[move];
+        } else {
+            score -= 10 * weights[move];
+        }
 
         List<Integer> flippedChips = getAllFlippedChips(board, move, charToCheck, otherChar);
 
         for (int flipped : flippedChips) {
-            score += 7.5 * WEIGHTS[flipped];
+            if (maximize) {
+                score += 7.5 * weights[flipped];
+            } else {
+                score -= 7.5 * weights[flipped];
+            }
         }
 
         return score;
