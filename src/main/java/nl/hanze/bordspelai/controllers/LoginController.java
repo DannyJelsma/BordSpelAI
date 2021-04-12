@@ -36,6 +36,13 @@ public class LoginController implements Controller {
       Server server = BordspelAI.getServer();
       GameManager manager = GameManager.getInstance();
       Mode selectedMode = Mode.valueOf(mode.getSelectionModel().getSelectedItem().toUpperCase());
+
+      try {
+          Thread.sleep(200);
+      } catch (InterruptedException e) {
+          e.printStackTrace();
+      }
+
       System.out.println("Username: " + username.getText());
 
       manager.setMode(selectedMode);
@@ -44,12 +51,12 @@ public class LoginController implements Controller {
       manager.setUsername(username.getText());
       LobbyView view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
       SceneManager.switchScene(view);
-/*  } else {
-    Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
-            .setTitle("Error!")
-            .setContent(server.getLastError())
-            .build();
 
-    alert.show();*/
+          /*Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
+                  .setTitle("Error!")
+                  .setContent(ErrorListener.getLastError())
+                  .build();
+
+          alert.show();*/
   }
 }

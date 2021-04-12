@@ -8,8 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Reversi extends Game {
 
@@ -74,47 +75,43 @@ public class Reversi extends Game {
         return toFlip;
     }
 
+    private static final List<Integer> CORNERS = List.of(0, 7, 56, 63);
     @Override
     public int doBestMove() {
         calculations = 0;
         cacheHits = 0;
         Board newBoard = new Board(getBoard());
         long endTime = System.currentTimeMillis() + 5000;
-        final AtomicInteger highestScore = new AtomicInteger(Integer.MIN_VALUE);
-        final AtomicInteger bestMove = new AtomicInteger(Integer.MIN_VALUE);
+        int highestScore = Integer.MIN_VALUE;
+        int bestMove = Integer.MIN_VALUE;
         List<Integer> availableMoves = getAvailablePositions(newBoard, ownChar);
-        List<Future> threads = new ArrayList<>();
 
-        System.out.println("Available: " + availableMoves);
-        availableMoves.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, (int) move, false)).reversed());
-
-        for (int move : availableMoves) {
-            threads.add(executor.submit(() -> {
-                List<Integer> flippedChips = getAllFlippedChips(newBoard, move, ownChar, opponentChar);
-                newBoard.setPosition(move, ownChar);
-
-                for (int chip : flippedChips) {
-                    newBoard.setPosition(chip, ownChar);
-                }
-
-                int score = minimax(newBoard, 0, false, Integer.MIN_VALUE, Integer.MAX_VALUE, endTime, false);
-                if (score > highestScore.get()) {
-                    highestScore.set(score);
-                    bestMove.set(move);
-                }
-
-                newBoard.clearPosition(move);
-                for (int chip : flippedChips) {
-                    newBoard.setPosition(chip, opponentChar);
-                }
-            }));
+        for (int corner : CORNERS) {
+            if (availableMoves.contains(corner)) {
+                return corner;
+            }
         }
 
-        for (Future thread : threads) {
-            try {
-                thread.get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+        System.out.println("Available: " + availableMoves);
+        //availableMoves.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, (int) move, false)).reversed());
+
+        for (int move : availableMoves) {
+            List<Integer> flippedChips = getAllFlippedChips(newBoard, move, ownChar, opponentChar);
+            newBoard.setPosition(move, ownChar);
+
+            for (int chip : flippedChips) {
+                newBoard.setPosition(chip, ownChar);
+            }
+
+            int score = minimax(newBoard, 0, false, Integer.MIN_VALUE, Integer.MAX_VALUE, endTime, false);
+            if (score > highestScore) {
+                highestScore = score;
+                bestMove = move;
+            }
+
+            newBoard.clearPosition(move);
+            for (int chip : flippedChips) {
+                newBoard.setPosition(chip, opponentChar);
             }
         }
 
@@ -125,13 +122,13 @@ public class Reversi extends Game {
 
         // Failsafe
         List<Integer> avail = getAvailablePositions(getBoard(), ownChar);
-        if (!getAvailablePositions(getBoard(), ownChar).contains(bestMove.get())) {
-            System.out.println("ERROR: Tried to do an illegal move at " + bestMove.get() + ".");
+        if (!getAvailablePositions(getBoard(), ownChar).contains(bestMove)) {
+            System.out.println("ERROR: Tried to do an illegal move at " + bestMove + ".");
 
             return avail.get(ThreadLocalRandom.current().nextInt(0, avail.size()));
         }
 
-        return bestMove.get();
+        return bestMove;
     }
 
     public void doBackgroundCalculations() {
@@ -153,9 +150,8 @@ public class Reversi extends Game {
                 }
 
                 List<Integer> ourAvailablePositions = getAvailablePositions(newBoard, ownChar);
-                ourAvailablePositions.sort(Comparator.comparingInt(move2 -> doHeuristics(newBoard, move2, true)));
+                //ourAvailablePositions.sort(Comparator.comparingInt(move2 -> doHeuristics(newBoard, move2, true)));
                 for (int move2 : ourAvailablePositions) {
-                    //executor.submit(() -> {
                     List<Integer> flippedChips2 = getAllFlippedChips(newBoard, move2, ownChar, opponentChar);
                     newBoard.setPosition(move2, ownChar);
 
@@ -174,7 +170,6 @@ public class Reversi extends Game {
                     for (int chip : flippedChips) {
                         newBoard.setPosition(chip, ownChar);
                     }
-                    //});
                 }
             }
         }
@@ -213,7 +208,7 @@ public class Reversi extends Game {
         if (maximize) {
             int bestScore = Integer.MIN_VALUE;
             List<Integer> availablePositions = getAvailablePositions(board, ownChar);
-            availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(board, move, true)));
+            //availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(board, move, true)));
 
             for (int move : availablePositions) {
                 if (System.currentTimeMillis() > endTime) {
@@ -257,7 +252,7 @@ public class Reversi extends Game {
         } else {
             int bestScore = Integer.MAX_VALUE;
             List<Integer> availablePositions = getAvailablePositions(board, opponentChar);
-            availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(board, (int) move, false)).reversed());
+            //availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(board, (int) move, false)).reversed());
 
             for (int move : availablePositions) {
                 if (System.currentTimeMillis() > endTime) {
@@ -350,29 +345,139 @@ public class Reversi extends Game {
         return weights;
     }
 
+    public List<Character> getAllDiscsOnRow(Board board, int move) {
+        List<Character> chips = new ArrayList<>();
+
+        if (move >= 0 && move <= 7) {
+            for (int i = 0; i < 7; i++) {
+                chips.add(board.getPosition(i));
+            }
+        } else if (move >= 8 && move <= 15) {
+            for (int i = 8; i < 15; i++) {
+                chips.add(board.getPosition(i));
+            }
+        } else if (move >= 16 && move <= 23) {
+            for (int i = 16; i < 23; i++) {
+                chips.add(board.getPosition(i));
+            }
+        } else if (move >= 24 && move <= 31) {
+            for (int i = 24; i < 31; i++) {
+                chips.add(board.getPosition(i));
+            }
+        } else if (move >= 32 && move <= 39) {
+            for (int i = 32; i < 39; i++) {
+                chips.add(board.getPosition(i));
+            }
+        } else if (move >= 40 && move <= 47) {
+            for (int i = 40; i < 47; i++) {
+                chips.add(board.getPosition(i));
+            }
+        } else if (move >= 48 && move <= 55) {
+            for (int i = 48; i < 55; i++) {
+                chips.add(board.getPosition(i));
+            }
+        } else if (move >= 56 && move <= 63) {
+            for (int i = 56; i < 63; i++) {
+                chips.add(board.getPosition(i));
+            }
+        }
+
+        return chips;
+    }
+
     private int doHeuristics(Board board, int move, boolean maximize) {
         int[] weights = getWeights(board, maximize);
         int score = 0;
         char charToCheck = maximize ? ownChar : opponentChar;
         char otherChar = maximize ? opponentChar : ownChar;
 
+        if (isStable(board, move, maximize)) {
+            if (maximize) {
+                score += 25;
+            } else {
+                score -= 25;
+            }
+        }
+
+        if (board.getAllUsedPositions().size() > 48) {
+            int opponentAmount = getBoard().getAmount(opponentChar);
+            int ourAmount = getBoard().getAmount(ownChar);
+
+            if (maximize) {
+                score += ourAmount - opponentAmount;
+            } else {
+                score -= opponentAmount - ourAmount;
+            }
+        } /*else if (board.getAllUsedPositions().size() > 16) {
+            if (maximize) {
+                score += getAvailablePositions(board, ownChar).size();
+            } else {
+                score -= getAvailablePositions(board, opponentChar).size();
+            }
+        }*/
+
         if (maximize) {
-            score += 10 * weights[move];
+            score += 100 * weights[move];
         } else {
-            score -= 10 * weights[move];
+            score -= 100 * weights[move];
         }
 
         List<Integer> flippedChips = getAllFlippedChips(board, move, charToCheck, otherChar);
 
         for (int flipped : flippedChips) {
             if (maximize) {
-                score += 7.5 * weights[flipped];
+                score += 50 * weights[flipped];
             } else {
-                score -= 7.5 * weights[flipped];
+                score -= 50 * weights[flipped];
+            }
+
+            if (isStable(board, flipped, maximize)) {
+                if (maximize) {
+                    score += 30;
+                } else {
+                    score -= 30;
+                }
             }
         }
 
         return score;
+    }
+
+    private boolean isStable(Board board, int pos, boolean maximize) {
+        boolean onTopColumn = pos < 9;
+        boolean onRightRow = pos % 8 == 7;
+        boolean onBottomColumn = pos >= 56;
+        boolean onLeftRow = pos % 8 == 0;
+        char otherChar = maximize ? opponentChar : ownChar;
+
+        boolean stable = true;
+
+        for (Direction dir : Direction.values()) {
+            int positionInDirection = getChipPosition(dir, pos);
+
+            if (positionInDirection == -1) {
+                continue;
+            }
+
+            List<Character> row = getAllDiscsOnRow(board, positionInDirection);
+            if (row.contains(otherChar) || row.contains(NO_CHIP)) {
+                if (onTopColumn || onRightRow || onBottomColumn || onLeftRow) {
+                    stable = false;
+                    break;
+                }
+
+                // Probably huge performance impact
+                if (!isStable(board, positionInDirection, maximize)) {
+                    stable = false;
+                    break;
+                }
+
+                stable = false;
+                break;
+            }
+        }
+
+        return stable;
     }
 
     private boolean isValidMove(Board board, int pos, char opponent) {
@@ -455,7 +560,7 @@ public class Reversi extends Game {
             }
         }
 
-        minimaxCache.removeRedundantEntries(getBoard().getSize());
+        executor.submit(() -> minimaxCache.removeRedundantEntries(getBoard().getSize()));
         if (charToMove == ownChar) {
             executor.submit(this::doBackgroundCalculations);
         }
