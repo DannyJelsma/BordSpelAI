@@ -19,7 +19,7 @@ public class Reversi extends Game {
     private final MinimaxCache minimaxCache = new MinimaxCache();
     private int cacheHits = 0;
     private int calculations = 0;
-    private static final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
+    private static final int MAX_THREADS = Runtime.getRuntime().availableProcessors() - 2;
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
     private final ThreadPoolExecutor executor = new ThreadPoolExecutor(MAX_THREADS, MAX_THREADS, 0L, TimeUnit.MILLISECONDS, queue);
 
@@ -126,6 +126,51 @@ public class Reversi extends Game {
         char charToCheck = isBackgroundTask ? opponentChar : ownChar;
         char otherChar = isBackgroundTask ? ownChar : opponentChar;
         List<Integer> availableMoves = getAvailablePositions(board, charToCheck);
+
+        List<Integer> X_SQUARES = new ArrayList<>(List.of(9, 49, 14, 54));
+        List<Integer> C_SQUARES = new ArrayList<>(List.of(8, 1, 6, 15, 48, 57, 55, 62));
+
+        if (getBoard().getPosition(0) == ownChar) {
+            X_SQUARES.remove((Integer) 9);
+            C_SQUARES.remove((Integer) 8);
+            C_SQUARES.remove((Integer) 1);
+        }
+
+        if (getBoard().getPosition(7) == ownChar) {
+            X_SQUARES.remove((Integer) 14);
+            C_SQUARES.remove((Integer) 6);
+            C_SQUARES.remove((Integer) 15);
+        }
+
+        if (getBoard().getPosition(56) == ownChar) {
+            X_SQUARES.remove((Integer) 49);
+            C_SQUARES.remove((Integer) 48);
+            C_SQUARES.remove((Integer) 57);
+        }
+
+        if (getBoard().getPosition(63) == ownChar) {
+            X_SQUARES.remove((Integer) 54);
+            C_SQUARES.remove((Integer) 55);
+            C_SQUARES.remove((Integer) 62);
+        }
+
+        int counter = 0;
+        for (int square : X_SQUARES) {
+            if (availableMoves.contains(square)) {
+                counter++;
+            }
+        }
+
+        for (int square : C_SQUARES) {
+            if (availableMoves.contains(square)) {
+                counter++;
+            }
+        }
+
+        if (availableMoves.size() > counter) {
+            availableMoves.removeAll(X_SQUARES);
+            availableMoves.removeAll(C_SQUARES);
+        }
 
         for (int move : availableMoves) {
             Future future = executor.submit(() -> {
@@ -412,9 +457,9 @@ public class Reversi extends Game {
         }
 
         if (maximize) {
-            score += 100 * weights[move];
+            score += 200 * weights[move];
         } else {
-            score -= 100 * weights[move];
+            score -= 200 * weights[move];
         }
 
         List<Integer> flippedChips = getAllFlippedChips(board, move, charToCheck, otherChar);
