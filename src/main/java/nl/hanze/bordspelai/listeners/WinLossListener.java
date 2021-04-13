@@ -52,7 +52,8 @@ public class WinLossListener implements NetEventListener {
             Game game = GameManager.getInstance().getGameController().getGame();
 
             if (game instanceof Reversi) {
-                ((Reversi) game).clearCache();
+                Reversi reversi = (Reversi) game;
+                reversi.reset();
             }
 
             NetEventManager.getInstance().unregister(GameManager.getInstance().getGameController());

@@ -15,7 +15,7 @@ public class MinimaxCache {
 
     public int getScoreForState(BoardState state, int boardSize) {
         if (!containsState(state, boardSize)) {
-            return Integer.MIN_VALUE;
+            return -100000;
         } else {
             return cache.get(boardSize).get(state);
         }
@@ -38,6 +38,10 @@ public class MinimaxCache {
     }
 
     public void addBoardState(BoardState state, int boardSize, int score) {
+        if (score < -100000 || score > 100000) {
+            return;
+        }
+
         if (cache.containsKey(boardSize)) {
             cache.get(boardSize).put(state, score);
         } else {
