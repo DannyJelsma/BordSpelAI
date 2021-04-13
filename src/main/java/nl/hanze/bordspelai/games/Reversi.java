@@ -171,7 +171,7 @@ public class Reversi extends Game {
                 return -1;
             }
 
-            runningTasks.removeIf(task -> task.isDone() || task.isCancelled());
+            runningTasks.removeIf(task -> task.isDone());
         }
 
         queue.clear();
@@ -217,6 +217,7 @@ public class Reversi extends Game {
 
                     return Math.max(score, bestScore);
                 }
+
 
                 List<Integer> flippedChips = getAllFlippedChips(board, move, ownChar, opponentChar);
                 board.setPosition(move, ownChar);
@@ -594,7 +595,11 @@ public class Reversi extends Game {
     public void reset() {
         minimaxCache.reset();
         queue.clear();
-        executor.shutdownNow();
+        try {
+            executor.awaitTermination(2500, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private enum Direction {
