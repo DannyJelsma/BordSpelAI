@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Reversi extends Game {
 
@@ -22,7 +21,7 @@ public class Reversi extends Game {
     private int calculations = 0;
     private static final int MAX_THREADS = Runtime.getRuntime().availableProcessors();
     private final BlockingQueue<Runnable> queue = new LinkedBlockingQueue<>();
-    private final Executor executor = new ThreadPoolExecutor(MAX_THREADS, MAX_THREADS, 0L, TimeUnit.MILLISECONDS, queue);
+    private final ThreadPoolExecutor executor = new ThreadPoolExecutor(MAX_THREADS, MAX_THREADS, 0L, TimeUnit.MILLISECONDS, queue);
 
     public Reversi(String startingPlayer) {
         super(8, startingPlayer);
@@ -88,7 +87,6 @@ public class Reversi extends Game {
         }
 
         System.out.println("Available: " + availableMoves);
-        //availableMoves.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, (int) move, false)).reversed());
         int bestMove = parallelMinimax(getBoard(), endTime, false);
 
         System.out.println("Cache hits: " + cacheHits);
@@ -114,7 +112,6 @@ public class Reversi extends Game {
         Board newBoard = new Board(getBoard());
 
         // Fill cache while waiting for the opponent
-        //availablePositions.sort(Comparator.comparingInt(move -> doHeuristics(newBoard, (int) move, false)).reversed());
         parallelMinimax(newBoard, endTime, true);
 
         System.out.println("BG - Cache hits: " + cacheHits);
@@ -124,15 +121,14 @@ public class Reversi extends Game {
     }
 
     private int parallelMinimax(Board board, long endTime, boolean isBackgroundTask) {
-        AtomicInteger runningThreads = new AtomicInteger();
+        List<Future> runningTasks = new ArrayList<>();
         MinimaxResult result = new MinimaxResult();
         char charToCheck = isBackgroundTask ? opponentChar : ownChar;
         char otherChar = isBackgroundTask ? ownChar : opponentChar;
         List<Integer> availableMoves = getAvailablePositions(board, charToCheck);
 
         for (int move : availableMoves) {
-            runningThreads.incrementAndGet();
-            executor.execute(() -> {
+            Future future = executor.submit(() -> {
                 Board newBoard = new Board(board);
 
                 List<Integer> flippedChips = getAllFlippedChips(newBoard, move, charToCheck, otherChar);
@@ -149,21 +145,33 @@ public class Reversi extends Game {
                     result.setScore(score);
                     result.setMove(move);
                 }
-
-                runningThreads.decrementAndGet();
             });
+
+            runningTasks.add(future);
         }
 
-        while (runningThreads.get() > 0) {
-            if (System.currentTimeMillis() > endTime + 3000) {
+        while (runningTasks.size() > 0) {
+            if (System.currentTimeMillis() > endTime + 2000) {
                 queue.clear();
+
+                for (Future task : runningTasks) {
+                    task.cancel(true);
+                }
+
                 return result.getMove().get();
             }
 
             if (isBackgroundTask && manager.getState().equals(GameState.YOUR_TURN)) {
                 queue.clear();
+
+                for (Future task : runningTasks) {
+                    task.cancel(true);
+                }
+
                 return -1;
             }
+
+            runningTasks.removeIf(task -> task.isDone() || task.isCancelled());
         }
 
         queue.clear();
@@ -586,6 +594,7 @@ public class Reversi extends Game {
     public void reset() {
         minimaxCache.reset();
         queue.clear();
+        executor.shutdownNow();
     }
 
     private enum Direction {
