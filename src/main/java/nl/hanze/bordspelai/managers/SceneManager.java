@@ -16,9 +16,15 @@ public class SceneManager {
 
   public static void setStage(Stage newStage) {
     stage = newStage;
+    stage.setHeight(400);
+    stage.setWidth(600);
   }
 
   public static void switchScene(View view) {
+    switchScene(view, "");
+  }
+
+  public static void switchScene(View view , String title) {
     Platform.runLater(() -> {
       try {
         Parent root = view.getLoader().load();
@@ -33,6 +39,7 @@ public class SceneManager {
         }
 
         // stage.setMaximized(true);
+        stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
       } catch (IOException e) {

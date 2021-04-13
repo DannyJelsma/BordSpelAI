@@ -72,6 +72,8 @@ public abstract class Game {
                 grid.setVgap(gap);
                 btn.setStyle("-fx-background-color: #ECECEC; -fx-background-radius: " + gap + "px;");
 
+                btn.setMinHeight(cardSize);
+                btn.setMinWidth(cardSize);
                 btn.setPrefSize(cardSize, cardSize);
 
                 int clicked = size * i + j;

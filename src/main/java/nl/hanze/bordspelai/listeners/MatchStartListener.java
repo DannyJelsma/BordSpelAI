@@ -38,21 +38,24 @@ public class MatchStartListener implements NetEventListener {
                 Game game = null;
                 GameController gameController = null;
                 View view = null;
+                String title = "";
 
                 if (gameType.equalsIgnoreCase("Tic-tac-toe")) {
                     game = new TicTacToe(dataMap.get("PLAYERTOMOVE"));
                     gameController = new GameController(game);
                     view = new TicTacToeView(gameController);
+                    title = gameType;
                 } else if (gameType.equalsIgnoreCase("Reversi")) {
                     game = new Reversi(dataMap.get("PLAYERTOMOVE"));
                     gameController = new GameController(game);
                     view = new ReversiView(gameController);
+                    title = gameType;
                 }
 
                 if (game != null) {
                     NetEventManager.getInstance().register(gameController);
                     manager.setGameController(gameController);
-                    SceneManager.switchScene(view);
+                    SceneManager.switchScene(view, title);
                 }
             });
         }
