@@ -57,7 +57,7 @@ public abstract class Game {
         } else scoreBox.setVisible(false);
 
         // own char is You
-        if(ownChar == 'x') {
+        if(ownChar == 'o') {
             xPlayer.setText(manager.getUsername());
             xPlayer.setStyle("-fx-font-weight: bold;");
 
@@ -68,9 +68,6 @@ public abstract class Game {
 
             xPlayer.setText(manager.getOpponent());
         }
-        
-
-
     
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
