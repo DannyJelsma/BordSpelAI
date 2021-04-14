@@ -77,7 +77,7 @@ public class Reversi extends Game {
     public int doBestMove() {
         calculations = 0;
         cacheHits = 0;
-        long endTime = System.currentTimeMillis() + 5000;
+        long endTime = System.currentTimeMillis() + 4000;
         List<Integer> availableMoves = getAvailablePositions(getBoard(), ownChar);
 
         for (int corner : CORNERS) {
@@ -627,7 +627,7 @@ public class Reversi extends Game {
         minimaxCache.reset();
         queue.clear();
         try {
-            executor.awaitTermination(2500, TimeUnit.MILLISECONDS);
+            executor.awaitTermination(1000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

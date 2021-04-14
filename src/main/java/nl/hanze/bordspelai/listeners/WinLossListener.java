@@ -13,7 +13,6 @@ import nl.hanze.bordspelai.managers.GameManager;
 import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.notifications.Notification;
 import nl.hanze.bordspelai.views.LobbyView;
-import nl.hanze.bordspelai.views.View;
 
 public class WinLossListener implements NetEventListener {
 
@@ -57,8 +56,8 @@ public class WinLossListener implements NetEventListener {
             }
 
             NetEventManager.getInstance().unregister(GameManager.getInstance().getGameController());
-            View view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
-            SceneManager.switchScene(view);
+            LobbyView view = new LobbyView("/views/lobby.fxml", new LobbyController(SceneManager.getLobbyModel()));
+            SceneManager.switchScene(view, "Hotel Lobby");
         });
     }
 }
