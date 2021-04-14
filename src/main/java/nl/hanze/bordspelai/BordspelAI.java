@@ -13,9 +13,15 @@ import nl.hanze.bordspelai.views.LoginView;
 import nl.hanze.bordspelai.views.View;
 
 public class BordspelAI extends Application {
-    private static final Server server = new Server("145.33.225.170", 7789);
+    private static Server server = new Server("145.33.225.170", 7789);
 
     public static void main(String[] args) {
+        BordspelAI bordspelAI = new BordspelAI();
+        bordspelAI.setup();
+        Application.launch(args);
+    }
+
+    private void setup() {
         NetEventManager netEventMgr = NetEventManager.getInstance();
         netEventMgr.register(new ChallengeReceiveListener());
         netEventMgr.register(new PlayerListUpdateListener(SceneManager.getLobbyModel()));
@@ -34,8 +40,11 @@ public class BordspelAI extends Application {
                 netEventMgr.notify(notification);
             }
         }).start();
+    }
 
-        Application.launch(args);
+    public void changeServer(String ip, int port) {
+        server = new Server(ip, port);
+        setup();
     }
 
     public static Server getServer() {

@@ -2,7 +2,11 @@ package nl.hanze.bordspelai.controllers;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
+import javafx.util.Pair;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.builder.AlertBuilder;
 import nl.hanze.bordspelai.enums.Command;
@@ -51,6 +55,82 @@ public class LobbyController implements Controller {
         Server server = BordspelAI.getServer();
         server.sendCommand(Command.GET_PLAYERLIST);
         new Thread(() -> Platform.runLater(this::updatePlayerList)).start();
+    }
+
+    public void options() {
+        // Create the custom dialog.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Options");
+        dialog.setHeaderText("Full in an ip-address and a port to connect to another server");
+
+        // Set the icon (must be included in the project).
+
+        // Set the button types.
+        ButtonType connectButtonType = new ButtonType("Connect", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(connectButtonType, ButtonType.CANCEL);
+
+        // Create the labels and fields.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField ipAddress = new TextField();
+        ipAddress.setPromptText("IP-Address");
+        TextField port = new TextField();
+        port.setPromptText("Port");
+
+        grid.add(new Label("IP-Address:"), 0, 0);
+        grid.add(ipAddress, 1, 0);
+        grid.add(new Label("Port:"), 0, 1);
+        grid.add(port, 1, 1);
+
+        // Enable/Disable connect button depending on whether a port was entered.
+        Node connectButton = dialog.getDialogPane().lookupButton(connectButtonType);
+        connectButton.setDisable(true);
+
+        // Do some validation (using the Java 8 lambda syntax).
+        port.textProperty().addListener((observable, oldValue, newValue) -> {
+            connectButton.setDisable(newValue.trim().isEmpty());
+        });
+
+        dialog.getDialogPane().setContent(grid);
+
+        // Request focus on the username field by default.
+        Platform.runLater(() -> ipAddress.requestFocus());
+
+        // Convert the result to a username-password-pair when the login button is clicked.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == connectButtonType) {
+                return new Pair<>(ipAddress.getText(), port.getText());
+            }
+            return null;
+        });
+
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        result.ifPresent(ipAddressAndPort -> {
+            BordspelAI bordspelAI = new BordspelAI();
+
+            try {
+                bordspelAI.changeServer(ipAddressAndPort.getKey(), Integer.parseInt(ipAddressAndPort.getValue()));
+                //refresh();
+            } catch (NumberFormatException e) {
+                AlertBuilder builder = new AlertBuilder(Alert.AlertType.ERROR);
+                Alert alert = builder.setTitle("Oops!")
+                        .setContent("Please full in a valid port")
+                        .build();
+
+                alert.show();
+            } catch (IllegalStateException e) {
+                AlertBuilder builder = new AlertBuilder(Alert.AlertType.ERROR);
+                Alert alert = builder.setTitle("Oops!")
+                        .setContent(e.getMessage())
+                        .build();
+
+                alert.show();
+            }
+        });
     }
 
     @FXML
