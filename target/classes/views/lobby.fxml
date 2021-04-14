@@ -8,8 +8,8 @@
 
 <HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <ListView fx:id="playerList" editable="true" prefHeight="400.0" prefWidth="512.0" style="-fx-background-insets: transparent; -fx-padding: 0;" HBox.hgrow="ALWAYS" />
-      <VBox alignment="BOTTOM_CENTER" maxWidth="287.0" minWidth="100.0" prefHeight="400.0" prefWidth="223.0" spacing="6.0" HBox.hgrow="NEVER">
+      <ListView fx:id="playerList" editable="true" prefWidth="500.0" style="-fx-background-insets: transparent; -fx-padding: 0;" HBox.hgrow="ALWAYS" />
+      <VBox alignment="BOTTOM_CENTER" maxWidth="300.0" minWidth="100.0" prefHeight="400.0" prefWidth="200.0" spacing="6.0" HBox.hgrow="ALWAYS">
          <children>
             <Button fx:id="challengeButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#challengePlayer" text="Challenge" />
             <Button fx:id="refreshButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#refresh" prefHeight="25.0" prefWidth="69.0" text="Refresh" />

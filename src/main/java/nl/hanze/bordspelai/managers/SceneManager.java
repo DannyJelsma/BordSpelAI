@@ -13,22 +13,29 @@ public class SceneManager {
 
   private static LobbyModel lobbyModel;
   private static Stage stage;
+  private static Parent parent;
 
   public static void setStage(Stage newStage) {
     stage = newStage;
-    stage.setHeight(400);
-    stage.setWidth(600);
+    stage.setMinHeight(475);
+    stage.setMinWidth(750);
   }
 
   public static void switchScene(View view) {
     switchScene(view, "");
   }
 
-  public static void switchScene(View view , String title) {
+  public static Parent getParent() {
+    return parent;
+  }
+
+  public static void switchScene(View view, String title) {
     Platform.runLater(() -> {
       try {
         Parent root = view.getLoader().load();
         Scene scene = new Scene(root);
+
+        parent = root;
 
         if (stage.getScene() != null) {
           Stage stage2 = (Stage) stage.getScene().getWindow();

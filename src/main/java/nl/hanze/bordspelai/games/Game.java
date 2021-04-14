@@ -1,13 +1,17 @@
 package nl.hanze.bordspelai.games;
 
 import javafx.application.Platform;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import nl.hanze.bordspelai.managers.GameManager;
+import nl.hanze.bordspelai.managers.SceneManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,7 +40,7 @@ public abstract class Game {
         }
     }
 
-    public void setupBoard(GridPane grid) {
+    public void setupBoard(GridPane grid, HBox scoreBox, Label xPlayer, Label oPlayer) {
         int baseAmount = 12;
         int size = getSize();
         int cardSize = (baseAmount - size) * 10;
@@ -48,8 +52,26 @@ public abstract class Game {
             addMove(28, 'o');
             addMove(35, 'o');
             addMove(36, 'x');
-        }
 
+            scoreBox.setVisible(true);
+        } else scoreBox.setVisible(false);
+
+        // own char is You
+        if(ownChar == 'x') {
+            xPlayer.setText(manager.getUsername());
+            xPlayer.setStyle("-fx-font-weight: bold;");
+
+            oPlayer.setText(manager.getOpponent());
+        } else {
+            oPlayer.setText(manager.getUsername());
+            oPlayer.setStyle("-fx-font-weight: bold;");
+
+            xPlayer.setText(manager.getOpponent());
+        }
+        
+
+
+    
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 Button btn = new Button("");
@@ -126,7 +148,16 @@ public abstract class Game {
                 ImageView view = new ImageView(image);
                 btn.setGraphic(view);
             }
+
+            // Last but not least, update the scores, for both games if in the
+            // future we would want to display TicTacToe scores.
+            Label oScore = (Label) SceneManager.getParent().lookup("#oScoreText");
+            oScore.setText("" + board.getAmount('o'));
+
+            Label xScore = (Label) SceneManager.getParent().lookup("#xScoreText");
+            xScore.setText("" + board.getAmount('x'));
         })).start();
+
     }
 
     public abstract int doBestMove();

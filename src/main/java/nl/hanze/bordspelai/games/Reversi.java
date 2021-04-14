@@ -2,6 +2,7 @@ package nl.hanze.bordspelai.games;
 
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.managers.GameManager;
+import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.minimax.MinimaxCache;
 import nl.hanze.bordspelai.minimax.MinimaxResult;
 
@@ -9,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
+
+import javafx.application.Platform;
+import javafx.scene.Group;
+import javafx.scene.control.Label;
 
 public class Reversi extends Game {
 

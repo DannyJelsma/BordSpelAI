@@ -1,8 +1,11 @@
 package nl.hanze.bordspelai.controllers;
 
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import nl.hanze.bordspelai.BordspelAI;
 import nl.hanze.bordspelai.enums.Command;
 import nl.hanze.bordspelai.enums.GameState;
@@ -18,6 +21,16 @@ import java.util.Map;
 public class GameController implements Controller, NetEventListener {
     @FXML
     private GridPane grid;
+
+    @FXML
+    private HBox scoreBox;
+
+    @FXML
+    private Label xPlayer;
+
+    @FXML
+    private Label oPlayer;
+
     private final Server server = BordspelAI.getServer();
     private ArrayList<Button> boardButtons = new ArrayList<>();
 
@@ -34,8 +47,11 @@ public class GameController implements Controller, NetEventListener {
 
     @FXML
     public void initialize() {
+        // bind score manage with visibility.
+        scoreBox.managedProperty().bind(scoreBox.visibleProperty());
+
         // setup grid
-        game.setupBoard(grid);
+        game.setupBoard(grid, scoreBox, xPlayer, oPlayer);
 
         if (manager.getState().equals(GameState.YOUR_TURN)) {
             doBestMove();

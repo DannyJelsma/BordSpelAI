@@ -38,13 +38,13 @@ public class MatchStartListener implements NetEventListener {
                     game = new TicTacToe(dataMap.get("PLAYERTOMOVE"));
                     gameController = new GameController(game);
                     view = new TicTacToeView(gameController);
-                    title = gameType;
                 } else if (gameType.equalsIgnoreCase("Reversi")) {
                     game = new Reversi(dataMap.get("PLAYERTOMOVE"));
                     gameController = new GameController(game);
                     view = new ReversiView(gameController);
-                    title = gameType;
                 }
+
+                title = gameType + " (" + manager.getUsername() + ")";
 
                 if (game != null) {
                     NetEventManager.getInstance().register(gameController);
