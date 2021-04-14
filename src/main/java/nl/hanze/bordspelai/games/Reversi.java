@@ -142,7 +142,7 @@ public class Reversi extends Game {
         }
 
         while (runningTasks.size() > 0) {
-            if (System.currentTimeMillis() > endTime + 2000) {
+            if (System.currentTimeMillis() > endTime + 1000) {
                 queue.clear();
 
                 for (Future task : runningTasks) {
@@ -269,6 +269,10 @@ public class Reversi extends Game {
                 if (minimaxCache.containsState(state, size)) {
                     cacheHits++;
                     score = minimaxCache.getScoreForState(state, size);
+
+                    if (score == Integer.MIN_VALUE) {
+                        score = minimax(board, depth + 1, false, alpha, beta, endTime, isBackgroundTask);
+                    }
                 } else {
                     score = minimax(board, depth + 1, false, alpha, beta, endTime, isBackgroundTask);
                     minimaxCache.addBoardState(state, size, bestScore);
@@ -317,6 +321,10 @@ public class Reversi extends Game {
                 if (minimaxCache.containsState(state, size)) {
                     cacheHits++;
                     score = minimaxCache.getScoreForState(state, size);
+
+                    if (score == Integer.MIN_VALUE) {
+                        score = minimax(board, depth + 1, false, alpha, beta, endTime, isBackgroundTask);
+                    }
                 } else {
                     score = minimax(board, depth + 1, true, alpha, beta, endTime, isBackgroundTask);
                     minimaxCache.addBoardState(state, size, bestScore);
