@@ -41,11 +41,18 @@ public class ChallengeReceiveListener implements NetEventListener {
                     if (buttonResult.isPresent()) {
                         if (buttonResult.get().equals(yesButton)) {
                             BordspelAI.getServer().sendCommand(Command.CHALLENGE_ACCEPT, challengeNumber);
-                       /* Alert errorAlert = new AlertBuilder(Alert.AlertType.ERROR)
-                                .setContent(BordspelAI.getServer().getLastError())
-                                .build();
+                            ErrorListener.waitForConfirmation((isOk, message) -> {
+                                if (!isOk) {
+                                    Platform.runLater(() -> {
+                                        Alert errorAlert = new AlertBuilder(Alert.AlertType.ERROR)
+                                                .setContent(message)
+                                                .build();
 
-                        errorAlert.show();*/
+                                        errorAlert.show();
+                                    });
+                                }
+
+                            });
                         }
                     }
                 });

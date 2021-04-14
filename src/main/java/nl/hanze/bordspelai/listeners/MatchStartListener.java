@@ -27,12 +27,6 @@ public class MatchStartListener implements NetEventListener {
 
                 GameManager manager = GameManager.getInstance();
                 String opponent = dataMap.get("OPPONENT");
-/*                Alert alert = new AlertBuilder(Alert.AlertType.CONFIRMATION)
-                        .setTitle("Match started")
-                        .setContent("A match of " + gameType + " has started. Playing against: " + opponent)
-                        .build();
-
-                alert.show();*/
                 manager.setOpponent(opponent);
 
                 Game game = null;

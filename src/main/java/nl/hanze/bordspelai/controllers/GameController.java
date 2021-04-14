@@ -26,42 +26,20 @@ public class GameController implements Controller, NetEventListener {
 
     public GameController(Game game) {
         this.game = game;
-//    this.server.sendCommand(Command.PLAY, "TicTacToe"); todo
     }
-
-    // public void update
 
     public Button getButton(int position) {
         return boardButtons.get(position);
     }
 
-    // initialize is called upon scene switch
     @FXML
     public void initialize() {
         // setup grid
         game.setupBoard(grid);
 
         if (manager.getState().equals(GameState.YOUR_TURN)) {
-/*            try {
-                Thread.sleep(2500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
             doBestMove();
         }
-
-        // for(int i = 0; i < board.length; i++) {
-        //   int row = (int) Math.ceil(i / model.getSize());
-        //   int column = i - model.getSize() * row;
-
-        //   System.out.println("X " + row + ", Y " + column );
-
-        //   grid.setGridLinesVisible(true);
-
-        //   Button btn = new Button(row + " " + column);
-        //   btn.setMinSize(Double.MAX_VALUE, Double.MAX_VALUE);
-        //   grid.add(btn, row, column);
-        // }
     }
 
     public void sendMove(int move) {

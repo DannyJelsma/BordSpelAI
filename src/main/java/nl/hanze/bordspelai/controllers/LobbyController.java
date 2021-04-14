@@ -98,14 +98,6 @@ public class LobbyController implements Controller {
 
                         alert.getButtonTypes().remove(1);
                         alert.show();
-                    } else {
-/*                            Alert alert = new AlertBuilder(Alert.AlertType.ERROR)
-                                .setTitle("Failed to send challenge")
-                                .setContent(BordspelAI.getServer().getLastError())
-                                .build();
-
-                        alert.getButtonTypes().remove(1);
-                        alert.show();*/
                     }
                 }
             });

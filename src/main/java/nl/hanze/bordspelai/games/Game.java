@@ -16,19 +16,11 @@ import java.util.List;
 public abstract class Game {
     public final GameManager manager = GameManager.getInstance();
 
-    private ArrayList<Button> buttons = new ArrayList<>();
-    private char ownChar;
-    private char opponentChar;
+    private final ArrayList<Button> buttons = new ArrayList<>();
+    private final char ownChar;
+    private final char opponentChar;
     private final int size;
-    private Board board;
-
-//    private final String ownUsername;
-//    private final String opponentUsername;
-//
-//    private final char ownChar;
-//    private final char opponentChar;
-
-    private ArrayList<Integer> availableMoves;
+    private final Board board;
 
     public Game(int size, String startingPlayer) {
         this.size = size;
@@ -42,13 +34,6 @@ public abstract class Game {
             this.ownChar = 'o';
             this.opponentChar = 'x';
         }
-
-//        GameManager manager = GameManager.getInstance();
-//        this.ownUsername = manager.getUsername();
-//        this.opponentUsername = manager.getOpponent();
-//
-//        this.ownChar = 'x';
-//        this.opponentChar = 'o';
     }
 
     public void setupBoard(GridPane grid) {
@@ -71,30 +56,14 @@ public abstract class Game {
                 grid.setHgap(gap);
                 grid.setVgap(gap);
                 btn.setStyle("-fx-background-color: #ECECEC; -fx-background-radius: " + gap + "px;");
-
                 btn.setMinHeight(cardSize);
                 btn.setMinWidth(cardSize);
                 btn.setPrefSize(cardSize, cardSize);
-
-                int clicked = size * i + j;
-                btn.setOnAction((event) -> {
-                    //addMove(clicked);
-
-                    // this.sendMove(clicked);
-                    //this.model.addMove(clicked, manager.getUsername());
-
-                    System.out.println("click " + clicked);
-                });
                 grid.add(btn, j, i);
-
                 buttons.add(btn);
             }
         }
     }
-
-    // public String getStartingPlayer() {
-    //     return startingPlayer;
-    // }
 
     public int getSize() {
         return size;
@@ -132,13 +101,6 @@ public abstract class Game {
 
             char move = board.getPosition(position);
             double imageSize = btn.getPrefWidth() * 0.5;
-            //System.out.println(imageSize);
-
-            // test random move
-            // int randomNumber = new Random().nextInt(2);
-            // if(randomNumber == 0) {
-            //     move = 'o';
-            // } else move = 'x';
 
             // might not be the cleanest way of solving the different gamemodes.
             if (this instanceof Reversi) {

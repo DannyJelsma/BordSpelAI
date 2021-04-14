@@ -3,7 +3,6 @@ package nl.hanze.bordspelai.managers;
 import nl.hanze.bordspelai.controllers.GameController;
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.enums.Mode;
-import nl.hanze.bordspelai.games.Game;
 
 public class GameManager {
 
@@ -13,10 +12,10 @@ public class GameManager {
     private String opponent;
     private GameState state;
     private Mode mode;
-    private Game game;
     private GameController gameController;
 
     private GameManager() {
+        state = GameState.LOGIN;
     }
 
     public static GameManager getInstance() {

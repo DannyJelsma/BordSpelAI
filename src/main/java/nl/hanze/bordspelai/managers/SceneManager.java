@@ -38,7 +38,6 @@ public class SceneManager {
           }
         }
 
-        // stage.setMaximized(true);
         stage.setTitle(title);
         stage.setScene(scene);
         stage.show();
