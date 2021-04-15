@@ -2,7 +2,6 @@ package nl.hanze.bordspelai.games;
 
 import nl.hanze.bordspelai.enums.GameState;
 import nl.hanze.bordspelai.managers.GameManager;
-import nl.hanze.bordspelai.managers.SceneManager;
 import nl.hanze.bordspelai.minimax.MinimaxCache;
 import nl.hanze.bordspelai.minimax.MinimaxResult;
 
@@ -10,10 +9,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
-
-import javafx.application.Platform;
-import javafx.scene.Group;
-import javafx.scene.control.Label;
 
 public class Reversi extends Game {
 
@@ -117,7 +112,7 @@ public class Reversi extends Game {
         char otherChar = isBackgroundTask ? ownChar : opponentChar;
         List<Integer> availableMoves = getAvailablePositions(board, charToCheck);
 
-        modifyAvailableMoves(availableMoves);
+        modifyAvailableMoves(board, availableMoves, true);
 
         for (int move : availableMoves) {
             Future future = executor.submit(() -> {
@@ -174,29 +169,30 @@ public class Reversi extends Game {
         return result.getMove().get();
     }
 
-    private void modifyAvailableMoves(List<Integer> availableMoves) {
+    private void modifyAvailableMoves(Board board, List<Integer> availableMoves, boolean maximize) {
+        char charToCheck = maximize ? ownChar : opponentChar;
         List<Integer> X_SQUARES = new ArrayList<>(List.of(9, 49, 14, 54));
         List<Integer> C_SQUARES = new ArrayList<>(List.of(8, 1, 6, 15, 48, 57, 55, 62));
 
-        if (getBoard().getPosition(0) == ownChar) {
+        if (board.getPosition(0) == charToCheck) {
             X_SQUARES.remove((Integer) 9);
             C_SQUARES.remove((Integer) 8);
             C_SQUARES.remove((Integer) 1);
         }
 
-        if (getBoard().getPosition(7) == ownChar) {
+        if (board.getPosition(7) == charToCheck) {
             X_SQUARES.remove((Integer) 14);
             C_SQUARES.remove((Integer) 6);
             C_SQUARES.remove((Integer) 15);
         }
 
-        if (getBoard().getPosition(56) == ownChar) {
+        if (board.getPosition(56) == charToCheck) {
             X_SQUARES.remove((Integer) 49);
             C_SQUARES.remove((Integer) 48);
             C_SQUARES.remove((Integer) 57);
         }
 
-        if (getBoard().getPosition(63) == ownChar) {
+        if (board.getPosition(63) == charToCheck) {
             X_SQUARES.remove((Integer) 54);
             C_SQUARES.remove((Integer) 55);
             C_SQUARES.remove((Integer) 62);
@@ -253,6 +249,7 @@ public class Reversi extends Game {
                 return Math.max(ourAmount - opponentAmount, bestScore);
             }
 
+            modifyAvailableMoves(board, availablePositions, true);
             for (int move : availablePositions) {
                 if (System.currentTimeMillis() > endTime) {
                     int score = doHeuristics(board, move, true);
@@ -306,6 +303,7 @@ public class Reversi extends Game {
                 return Math.min(ourAmount - opponentAmount, bestScore);
             }
 
+            modifyAvailableMoves(board, availablePositions, false);
             for (int move : availablePositions) {
                 if (System.currentTimeMillis() > endTime) {
                     int score = doHeuristics(board, move, false);

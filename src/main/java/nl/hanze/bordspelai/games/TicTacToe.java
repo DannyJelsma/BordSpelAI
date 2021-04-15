@@ -8,19 +8,6 @@ public class TicTacToe extends Game {
         super(3, startingPlayer);
     }
 
-/*    @Override
-    public int doBestMove() {
-        ArrayList<Integer> availableMoves = this.getAvailablePositions();
-        int bestMove = 0;
-
-        for (int move: availableMoves) {
-        bestMove = availableMoves.get(new Random().nextInt(availableMoves.size())); // random (valid) move
-        }
-
-        //this.board.getPosition(bestMove] = this.getCharByUsername(manager.getCurrentPlayer());
-        return bestMove;
-    }*/
-
     @Override
     public int doBestMove() {
         int highestScore = Integer.MIN_VALUE;
